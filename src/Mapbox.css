@@ -1,0 +1,6 @@
+.map-container {
+  width: 400px;
+}
+.mapboxgl-map {
+  z-index: -1;
+}
