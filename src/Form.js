@@ -53,7 +53,9 @@ class Form extends Component {
     super(props);
     this.state = {
       location: [],
-      locid: ''
+      locid: '',
+      lat: '',
+      lng: ''
     }
   }
 
@@ -80,7 +82,9 @@ class Form extends Component {
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
       .then(res => this.setState({
-        location: res.data.resultSet.arrival
+        location: res.data.resultSet.arrival,
+        lat: res.data.resultSet.arrival[1].blockPosition.lat,
+        lng: res.data.resultSet.arrival[1].blockPosition.lng
       }))
       .catch(error => console.log(error)
       )
