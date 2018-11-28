@@ -1,6 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import './Form.css';
 import logo from './assets/trimet-icon.png';
+import axios from 'axios';
+
 
 
 // Material Styles
@@ -46,15 +48,46 @@ const styles = {
   }
 };
 
-class Form extends PureComponent {
+class Form extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      location: [],
+      locid: ''
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.locid !== prevProps.locid) {
+      this.setState({
+        locid: this.props.locid
+      })
+    }
+  }
+
+  handleChange = ({ target: {name, value} }) => this.setState ({ [name] : value })
+
 
   onHandleChange = event => {
     this.props.handleChange(event);
   };
 
+  fetchArrivalTimes = () => {
+    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    // const { lat, lng } = this.state;
+    axios
+      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
+      .then(res => this.setState({
+        location: res.data.resultSet.location
+      }))
+      .catch(error => console.log(error)
+      )
+  }
+
   render() {
     console.log(this.props);
-    const { location, classes } = this.props;
+    console.log(this.state);
+    const { location, classes, locid } = this.props;
     return (
       <div className="form-container">
         <Card
@@ -69,8 +102,8 @@ class Form extends PureComponent {
                <FormControl className={classes.formControl}>
                   <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
                   <Select
-                    value={this.props.lat + this.props.lng}
-                    onChange={this.onHandleChange}
+                    value={locid}
+                    onClick={this.handleChange}
                     classes={{
                       root: classes.root
                     }}
@@ -80,9 +113,9 @@ class Form extends PureComponent {
                     }}
                   >
                     {location.length > 0
-                    ? location.map(({ desc, locid, lat, lng, dir }) => (
-                      <MenuItem key={locid} value={lat + lng} className="nearby-results">
-                        {`${desc} ${dir}`}
+                    ? location.map(({ desc, locid, lat, dir }) => (
+                      <MenuItem key={lat} value={locid} className="nearby-results">
+                        {`${desc} ${dir} ${locid}`}
                       </MenuItem>
                     ))
                     : (<MenuItem value="">Locating nearby stops...</MenuItem>)

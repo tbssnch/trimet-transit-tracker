@@ -3,7 +3,7 @@ import Form from './Form';
 import busIcon from './assets/stop-icon.png';
 import './Mapbox.css';
 import mapboxgl from 'mapbox-gl';
-import Axios from 'axios';
+import axios from 'axios';
 
 
 mapboxgl.accessToken = 'pk.eyJ1IjoidGJzc25jaCIsImEiOiJjam9ranIwMjgwNWdqM2tudW1udjhkdTVhIn0._ECcZP3rrCwYmVxMyETD9w';
@@ -29,7 +29,7 @@ class Mapbox extends Component {
 
     this.map = new mapboxgl.Map({
       container: this.mapContainer,
-      style: 'mapbox://styles/mapbox/dark-v9',
+      style: 'mapbox://styles/mapbox/streets-v8',
       center: [ lng, lat ],
       zoom
     });
@@ -55,8 +55,8 @@ componentDidUpdate(prevProps, prevState) {
    // When state is updated get nearby stops
     this.fetchNearbyStops();
   }
-  // this.renderMarkers(this.state.lng, this.state.lat);
-  // this.renderMarkers();
+  this.renderMarkers(this.state.lng, this.state.lat);
+  this.renderMarkers();
  
 
   // this.map.on('click', function() {
@@ -106,7 +106,7 @@ componentDidUpdate(prevProps, prevState) {
   fetchNearbyStops = () => {
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
     // const { lat, lng } = this.state;
-    Axios
+    axios
       .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
       .then(res => this.setState({
         location: res.data.resultSet.location
@@ -115,17 +115,17 @@ componentDidUpdate(prevProps, prevState) {
       )
   }
 
-  fetchArrivalTimes = () => {
-    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-    // const { lat, lng } = this.state;
-    Axios
-      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.stopId}&appID=${TRIMET_API_KEY}&json=true`)
-      .then(res => this.setState({
-        location: res.data.resultSet.location
-      }))
-      .catch(error => console.log(error)
-      )
-  }
+  // fetchArrivalTimes = () => {
+  //   const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+  //   // const { lat, lng } = this.state;
+  //   Axios
+  //     .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.stopId}&appID=${TRIMET_API_KEY}&json=true`)
+  //     .then(res => this.setState({
+  //       location: res.data.resultSet.location
+  //     }))
+  //     .catch(error => console.log(error)
+  //     )
+  // }
 
 
 
@@ -148,12 +148,11 @@ componentDidUpdate(prevProps, prevState) {
     }
   }
 
-  handleChange = ({ target: {name, value} }) => this.setState ({ [name] : value })
-
 
   render() {
     const { lng, lat, zoom, location } = this.state;
     console.log(this.map);
+    console.log(this.props);
     console.log(this.state);
     return(
       <div className="map-container">
