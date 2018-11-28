@@ -57,11 +57,12 @@ class Form extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.locid !== prevProps.locid) {
-      this.setState({
-        locid: this.props.locid
-      })
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.locid !== prevState.locid) {
+      // this.setState({
+      //   locid: this.props.locid
+      // })
+      this.fetchArrivalTimes()
     }
   }
 
@@ -73,12 +74,13 @@ class Form extends Component {
   };
 
   fetchArrivalTimes = () => {
+    console.log("Arrival called!")
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
     // const { lat, lng } = this.state;
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
       .then(res => this.setState({
-        location: res.data.resultSet.location
+        location: res.data.resultSet.arrival
       }))
       .catch(error => console.log(error)
       )
