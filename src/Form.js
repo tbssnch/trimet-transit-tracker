@@ -48,7 +48,9 @@ const styles = {
 
 class Form extends PureComponent {
 
-
+  onHandleChange = event => {
+    this.props.handleChange(event);
+  };
 
   render() {
     console.log(this.props);
@@ -67,8 +69,8 @@ class Form extends PureComponent {
                <FormControl className={classes.formControl}>
                   <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
                   <Select
-                    // value={this.props.locid}
-                    // onChange={this.onHandleChange}
+                    value={this.props.lat + this.props.lng}
+                    onChange={this.onHandleChange}
                     classes={{
                       root: classes.root
                     }}
@@ -78,16 +80,15 @@ class Form extends PureComponent {
                     }}
                   >
                     {location.length > 0
-                    ? location.map(({ desc, locid, lat, dir }) => (
-                      <MenuItem key={lat} value={locid} className="nearby-results">
-                        {`${desc} ${dir} ${locid}`}
+                    ? location.map(({ desc, locid, lat, lng, dir }) => (
+                      <MenuItem key={locid} value={lat + lng} className="nearby-results">
+                        {`${desc} ${dir}`}
                       </MenuItem>
                     ))
                     : (<MenuItem value="">Locating nearby stops...</MenuItem>)
                   }
                   </Select>
                 </FormControl>
-
             </form>
           </CardContent>
         </Card>

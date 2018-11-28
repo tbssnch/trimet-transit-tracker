@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Form from './Form';
-import busIcon from './assets/bus-icon.png';
+import busIcon from './assets/stop-icon.png';
 import './Mapbox.css';
 import mapboxgl from 'mapbox-gl';
 import Axios from 'axios';
@@ -16,12 +16,15 @@ class Mapbox extends Component {
       lng: -122.6587,
       lat: 45.5122,
       zoom: 12.5,
-      location: []
+      location: [],
+      arrival: [],
+      locid: ''
     }
   }
 
   componentDidMount() {
     this.getLocation()
+    // this.fetchNearbyStops();
     const { lng, lat, zoom,  } = this.state;
 
     this.map = new mapboxgl.Map({
@@ -38,9 +41,7 @@ class Mapbox extends Component {
       trackUserLocation: true
   }));
 
-  this.renderMarkers();
-
-
+  // this.renderMarkers();
   
   console.log(this.map);
   
@@ -51,12 +52,12 @@ componentDidUpdate(prevProps, prevState) {
   if (this.state.lat !== prevState.lat &&
     this.state.lng !== prevState.lng
   ) {
-   // When state is updated will get nearby stops
+   // When state is updated get nearby stops
     this.fetchNearbyStops();
   }
-  this.renderMarkers(-122.654144408319, 45.4981931577262);
+  // this.renderMarkers(this.state.lng, this.state.lat);
   // this.renderMarkers();
-
+ 
 
   // this.map.on('click', function() {
     // const self = this;
@@ -65,15 +66,17 @@ componentDidUpdate(prevProps, prevState) {
 
   }
 
-  renderMarkers = (lng = -122.6587, lat = 45.5122) => {
+  renderMarkers = (lng = this.state.lng, lat = this.state.lat) => {
     console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
+    
+
     
     this.map.loadImage(`${busIcon}`, (error, image) => {
       console.log(this, "this");
       console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
-      
+      console.log(this.state);
       if (error) throw error;
-      this.map.addImage('bus', image);
+      this.map.addImage('stop', image);
       this.map.addLayer({
           "id": "points",
           "type": "symbol",
@@ -85,14 +88,15 @@ componentDidUpdate(prevProps, prevState) {
                       "type": "Feature",
                       "geometry": {
                           "type": "Point",
-                          "coordinates": [lng, lat]
+                          "coordinates": [this.state.lng, this.state.lat]
                       }
                   }]
               }
           },
           "layout": {
-              "icon-image": "bus",
-              "icon-size": 0.25
+              "icon-image": "stop",
+              "icon-size": 0.50,
+              "icon-allow-overlap": true
           }
       });
   });
@@ -101,6 +105,7 @@ componentDidUpdate(prevProps, prevState) {
 
   fetchNearbyStops = () => {
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    // const { lat, lng } = this.state;
     Axios
       .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
       .then(res => this.setState({
@@ -108,12 +113,25 @@ componentDidUpdate(prevProps, prevState) {
       }))
       .catch(error => console.log(error)
       )
+  }
 
+  fetchArrivalTimes = () => {
+    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    // const { lat, lng } = this.state;
+    Axios
+      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.stopId}&appID=${TRIMET_API_KEY}&json=true`)
+      .then(res => this.setState({
+        location: res.data.resultSet.location
+      }))
+      .catch(error => console.log(error)
+      )
   }
 
 
 
+
   getLocation = () => {
+    console.log("GEOLOCATION")
     // Check for gelocation API
     if (navigator.geolocation) {
       // Get Current user location
@@ -130,14 +148,18 @@ componentDidUpdate(prevProps, prevState) {
     }
   }
 
+  handleChange = ({ target: {name, value} }) => this.setState ({ [name] : value })
+
+
   render() {
     const { lng, lat, zoom, location } = this.state;
     console.log(this.map);
+    console.log(this.state);
     return(
       <div className="map-container">
-        <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
+        {/* <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
           <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
-        </div>
+        </div> */}
         <div ref={el => this.mapContainer = el} className="absolute top right left bottom" />
         <Form location={location} />
       </div>
