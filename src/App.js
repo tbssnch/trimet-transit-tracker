@@ -1,87 +1,80 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Mapbox from './Mapbox';
-import Form from './Form';
+// import Form from './Form';
 
 class App extends Component {
-  // state = {
-  //   data: [],
-  //   id: 0,
-  //   message: null,
-  //   intervalIsSet: false,
-  //   isToDelete: null,
-  //   isToUpdate: null,
-  //   objectToUpdate: null
-  // };
+  constructor(props) {
+    super(props);
+    this.state = {
+      lng: -122.6587, // map centet lng
+      lat: 45.5122, // map center lat
+      zoom: 12.5, // map zoom
+      nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
+      arrival: [], // excat bus postion of the stop you selected
+      locid: '' // stop ID of what you selected
+    }
+    this.onStopSelected = this.onStopSelected.bind(this);
+  }
 
-  // componentDidMount() {
-  //   this.getDataFromDb();
-  //   if (!this.state.intervalIsSet) {
-  //     let interval = setInterval(this.getDataFromDb, 1000);
-  //     this.setState({ intervalIsSet: interval });
-  //   }
-  // }
+  componentDidMount() {
+    this.getLocation();
+  }
 
-  // componentWillUnmount() {
-  //   if (this.state.intervalIsSet) {
-  //     clearInterval(this.state.intervalIsSet);
-  //     this.setState({ intervalIsSet: null });
-  //   }
-  // }
+  getLocation() {
+    // Check for gelocation API
+    if (navigator.geolocation) {
+      // Get Current user location
+      // Updating the latitude and longitude in the state
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude, longitude }}) => {
+          this.setState({
+            lat: latitude, 
+            lng: longitude
+          })
+          this.fetchNearbyStops();
+        },
+        err => {
+          console.log(err);
+        },
+        { maximumAge: 60000, timeout: 90000 }
+      );
+    }
+  }
 
-  // getDataFromDb = () => {
-  //   fetch("/api/getData")
-  //     .then(data => data.json())
-  //     .then(res => this.setState({ data: res.data }));
-  // };
+  fetchNearbyStops = () => {
+    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
 
-  // putDataToDB = message => {
-  //   let currentIds = this.state.data.map(data => data.id);
-  //   let idToBeAdded = 0;
-  //   while (currentIds.includes(idToBeAdded)) {
-  //     ++idToBeAdded;
-  //   }
+    axios
+      .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
+      .then(res => {
+        this.setState({
+          ...this.state,
+         nearbyStops: res.data.resultSet.location
+        });
+      })
+      .catch(error => console.log(error)
+      )
+  }
 
-  //   axios.post("/api/putData", {
-  //     id: idToBeAdded,
-  //     message: message
-  //   });
-  // };
-
-  // deleteFromDb = isToDelete => {
-  //   let objIdToDelete = null;
-  //   this.state.data.forEach(dat => {
-  //     if (dat.id === isToDelete) {
-  //       objIdToDelete = dat._id;
-  //     }
-  //   });
-
-  //   axios.delete('/api/deleteData', {
-  //     data: {
-  //       id: objIdToDelete
-  //     }
-  //   });
-  // };
-
-  // updateDB = (idToUpdate, updateToApply) => {
-  //   let objIdToUpdate = null;
-  //   this.state.data.forEach(dat => {
-  //     if (dat.id === idToUpdate) {
-  //       objIdToUpdate = dat._id;
-  //     }
-  //   });
-
-  //   axios.post("/api/updateData", {
-  //     id: objIdToUpdate,
-  //     update: { message: updateToApply }
-  //   });
-  // };
-
+  onStopSelected(locid) {
+    this.setState({
+      locid,
+    });
+  }
 
   render() {
     return (
       <>
-        <Mapbox />
+        <Mapbox 
+          lat={this.state.lat}
+          lng={this.state.lng}
+          location={this.state.location}
+          nearbyStops={this.state.nearbyStops}
+          zoom={this.state.zoom}
+          locid={this.state.locid}
+          onStopSelected={this.onStopSelected}
+        />
       </>
 
     );

@@ -1,34 +1,22 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Form from './Form';
-import busIcon from './assets/stop-icon.png';
+import busIcon from './assets/bus-icon.png';
 import './Mapbox.css';
 import mapboxgl from 'mapbox-gl';
-import axios from 'axios';
+// import axios from 'axios';
 
 
 mapboxgl.accessToken = 'pk.eyJ1IjoidGJzc25jaCIsImEiOiJjam9ranIwMjgwNWdqM2tudW1udjhkdTVhIn0._ECcZP3rrCwYmVxMyETD9w';
 
 
-class Mapbox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      lng: -122.6587,
-      lat: 45.5122,
-      zoom: 12.5,
-      location: [],
-      arrival: [],
-      locid: ''
-    }
-  }
+class Mapbox extends PureComponent {
+  mapContainer = React.createRef();
 
   componentDidMount() {
-    this.getLocation()
-    // this.fetchNearbyStops();
-    const { lng, lat, zoom,  } = this.state;
+    const { lng, lat, zoom } = this.props;
 
     this.map = new mapboxgl.Map({
-      container: this.mapContainer,
+      container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v8',
       center: [ lng, lat ],
       zoom
@@ -36,83 +24,139 @@ class Mapbox extends Component {
 
     this.map.addControl(new mapboxgl.GeolocateControl({
       positionOptions: {
-          enableHighAccuracy: true
+        enableHighAccuracy: true
       },
       trackUserLocation: true
-  }));
+    }));
 
-  // this.renderMarkers();
-  
-  console.log(this.map);
-  
-}
+    this.map.on('load', () => {
+      this.map.loadImage(`${busIcon}`, (error, image) => {
+        if (error) throw error;
+        this.map.addImage('stop', image);
 
-componentDidUpdate(prevProps, prevState) {
-  console.log(this.map);
-  if (this.state.lat !== prevState.lat &&
-    this.state.lng !== prevState.lng
-  ) {
-   // When state is updated get nearby stops
-    this.fetchNearbyStops();
-  }
-  this.renderMarkers(this.state.lng, this.state.lat);
-  this.renderMarkers();
- 
-
-  // this.map.on('click', function() {
-    // const self = this;
-    
-  // });
-
-  }
-
-  renderMarkers = (lng = this.state.lng, lat = this.state.lat) => {
-    console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
-    
-
-    
-    this.map.loadImage(`${busIcon}`, (error, image) => {
-      console.log(this, "this");
-      console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
-      console.log(this.state);
-      if (error) throw error;
-      this.map.addImage('stop', image);
-      this.map.addLayer({
-          "id": "points",
-          "type": "symbol",
-          "source": {
-              "type": "geojson",
-              "data": {
-                  "type": "FeatureCollection",
-                  "features": [{
-                      "type": "Feature",
-                      "geometry": {
-                          "type": "Point",
-                          "coordinates": [this.state.lng, this.state.lat]
-                      }
-                  }]
-              }
-          },
-          "layout": {
-              "icon-image": "stop",
-              "icon-size": 0.50,
-              "icon-allow-overlap": true
-          }
+        if (!this.sourceAdded) {
+          this.addSource();
+        }
       });
-  });
+    });
   }
 
+  addSource() {
+    this.map.addSource('nearbystops', {
+      type: 'geojson',
+      data: null,
+    });
+    this.map.addLayer({
+      id: "nearbystops",
+      type: "symbol",
+      source: 'nearbystops',
+      paint: {
+        'icon-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'active'], false],
+          1,
+          0
+        ]
+      },
+      layout: {
+        "icon-image": "stop",
+        "icon-size": 0.10,
+        "icon-allow-overlap": true
+      }
+    });
+    this.sourceAdded = true;
+  }
 
-  fetchNearbyStops = () => {
-    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-    // const { lat, lng } = this.state;
-    axios
-      .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
-      .then(res => this.setState({
-        location: res.data.resultSet.location
-      }))
-      .catch(error => console.log(error)
-      )
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.nearbyStops.length) {
+      this.renderMarkers(this.props.nearbyStops);
+    }
+    if (prevProps.locid !== this.props.locid) {
+      this.setActiveStop(this.props.locid);
+    }
+  }
+
+  setActiveStop(locid) {
+    if (this.previouslySelectedLocid) {
+      this.map.setFeatureState({
+        source: 'nearbystops', 
+        id: this.previouslySelectedLocid
+      }, 
+      { 
+        active: false 
+      });
+    }
+
+    this.previouslySelectedLocid = locid;
+
+    this.map.setFeatureState({ 
+      source: 'nearbystops', 
+      id: this.props.locid,
+    }, {
+      active: true,
+    });
+  }
+
+  renderMarkers = (nearbyStops) => {
+    const FeatureCollection = {
+      type: "FeatureCollection",
+      features: nearbyStops.map((nearbyStop) => {
+        return {
+          id: nearbyStop.locid,
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              nearbyStop.lng,
+              nearbyStop.lat,
+            ]
+          }
+        };
+      }),
+    };
+    
+    this.map.on('load', () => {
+      if (!this.sourceAdded) {
+        this.addSource();
+      }
+      this.map.getSource('nearbystops').setData(FeatureCollection);
+    });
+
+
+      // query the map instance for the points source feature by id.(bing-bong)
+      // Update its position. 
+
+      
+      // this.map.loadImage(`${busIcon}`, (error, image) => {
+      //   // console.log(this, "this");
+      //   // console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
+      //   // console.log(this.state);
+      //   if (error) throw error;
+      //   this.map.addImage('stop', image);
+      //   this.map.addLayer({
+      //       "id": "points",
+      //       "type": "symbol",
+      //       "source": {
+      //           "type": "geojson",
+      //           "data": {
+      //               "type": "FeatureCollection",
+      //               "features": [{
+      //                   id: 'bing-bong',
+      //                   "type": "Feature",
+      //                   "geometry": {
+      //                       "type": "Point",
+      //                       "coordinates": [this.props.lng, this.props.lat]
+      //                   }
+      //               }]
+      //           }
+      //       },
+      //       "layout": {
+      //           "icon-image": "stop",
+      //           "icon-size": 0.10,
+      //           "icon-allow-overlap": true
+      //       }
+      //   });
+    // });
   }
 
   // fetchArrivalTimes = () => {
@@ -128,39 +172,19 @@ componentDidUpdate(prevProps, prevState) {
   // }
 
 
-
-
-  getLocation = () => {
-    console.log("GEOLOCATION")
-    // Check for gelocation API
-    if (navigator.geolocation) {
-      // Get Current user location
-      navigator.geolocation.getCurrentPosition(
-        // Updating the latitude and longitude in the state
-        ({ coords: { latitude, longitude }}) => this.setState({
-        lat: latitude, 
-        lng: longitude
-      })
-      ,
-      err => console.log(err),
-      { maximumAge: 60000, timeout: 5000 }
-      );
-    }
-  }
-
-
   render() {
-    const { lng, lat, zoom, location } = this.state;
-    console.log(this.map);
-    console.log(this.props);
-    console.log(this.state);
     return(
       <div className="map-container">
         {/* <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
           <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
         </div> */}
-        <div ref={el => this.mapContainer = el} className="absolute top right left bottom" />
-        <Form location={location} />
+        <div ref={this.mapContainer} className="absolute top right left bottom" />
+        <Form 
+          location={this.props.location}
+          nearbyStops={this.props.nearbyStops}
+          locid={this.props.locid}
+          onStopSelected={this.props.onStopSelected}
+        />
       </div>
     );
   }

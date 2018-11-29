@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import './Form.css';
 import logo from './assets/trimet-icon.png';
 import axios from 'axios';
@@ -48,52 +48,46 @@ const styles = {
   }
 };
 
-class Form extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      location: [],
-      locid: '',
-      lat: '',
-      lng: ''
-    }
-  }
+class Form extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.locid !== prevState.locid) {
-      // this.setState({
-      //   locid: this.props.locid
-      // })
-      this.fetchArrivalTimes()
-    }
+    // if (this.props.locid) {
+    //   // this.setState({
+    //   //   locid: this.props.locid
+    //   // })
+    //   // this.fetchArrivalTimes()
+    //   if (this.intervalId) {
+    //     window.clearInterval(this.intervalId);
+    //   }
+
+    //   this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
+    // }
   }
 
-  handleChange = ({ target: {name, value} }) => this.setState ({ [name] : value })
+  handleChange({ target: { value } }) {
+    this.setState({
 
-
-  onHandleChange = event => {
-    this.props.handleChange(event);
-  };
+    })
+    this.props.onStopSelected(value);
+  }
 
   fetchArrivalTimes = () => {
     console.log("Arrival called!")
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-    // const { lat, lng } = this.state;
+
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
       .then(res => this.setState({
         location: res.data.resultSet.arrival,
-        lat: res.data.resultSet.arrival[1].blockPosition.lat,
-        lng: res.data.resultSet.arrival[1].blockPosition.lng
+        lat: res.data.resultSet.arrival[0].blockPosition.lat,
+        lng: res.data.resultSet.arrival[0].blockPosition.lng
       }))
       .catch(error => console.log(error)
       )
   }
 
   render() {
-    console.log(this.props);
-    console.log(this.state);
-    const { location, classes, locid } = this.props;
+    const { classes, locid } = this.props;
     return (
       <div className="form-container">
         <Card
@@ -108,8 +102,8 @@ class Form extends Component {
                <FormControl className={classes.formControl}>
                   <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
                   <Select
-                    value={locid}
-                    onClick={this.handleChange}
+                    value={locid || ''}
+                    onChange={this.handleChange.bind(this)}
                     classes={{
                       root: classes.root
                     }}
@@ -118,8 +112,8 @@ class Form extends Component {
                       id: 'stop-id'
                     }}
                   >
-                    {location.length > 0
-                    ? location.map(({ desc, locid, lat, dir }) => (
+                    {this.props.nearbyStops.length > 0
+                    ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
                       <MenuItem key={lat} value={locid} className="nearby-results">
                         {`${desc} ${dir} ${locid}`}
                       </MenuItem>
