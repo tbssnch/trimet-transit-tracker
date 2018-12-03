@@ -49,6 +49,10 @@ const styles = {
 };
 
 class Form extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
   componentDidUpdate(prevProps, prevState) {
     // if (this.props.locid) {
@@ -65,26 +69,26 @@ class Form extends PureComponent {
   }
 
   handleChange({ target: { value } }) {
-    this.setState({
-
-    })
     this.props.onStopSelected(value);
+    // this.props.fetchArrivalTimes(value);
   }
 
-  fetchArrivalTimes = () => {
-    console.log("Arrival called!")
-    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
 
-    axios
-      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
-      .then(res => this.setState({
-        location: res.data.resultSet.arrival,
-        lat: res.data.resultSet.arrival[0].blockPosition.lat,
-        lng: res.data.resultSet.arrival[0].blockPosition.lng
-      }))
-      .catch(error => console.log(error)
-      )
-  }
+  // fetchArrivalTimes = () => {
+  //   console.log("Arrival called!")
+  //   const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+
+  //   axios
+  //     .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
+  //     .then(res => this.setState({
+  //       ...this.setState,
+  //       location: res.data.resultSet.arrival,
+  //       lat: res.data.resultSet.arrival[0].blockPosition.lat,
+  //       lng: res.data.resultSet.arrival[0].blockPosition.lng
+  //     }))
+  //     .catch(error => console.log(error)
+  //     )
+  // }
 
   render() {
     const { classes, locid } = this.props;
@@ -103,7 +107,8 @@ class Form extends PureComponent {
                   <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
                   <Select
                     value={locid || ''}
-                    onChange={this.handleChange.bind(this)}
+                    onChange={this.handleChange}
+                    onClick={this.handleClick}
                     classes={{
                       root: classes.root
                     }}

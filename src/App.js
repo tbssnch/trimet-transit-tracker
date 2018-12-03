@@ -12,14 +12,27 @@ class App extends Component {
       zoom: 12.5, // map zoom
       nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
       arrival: [], // excat bus postion of the stop you selected
-      locid: '' // stop ID of what you selected
+      locid: '', // stop ID of what you selected
+      busLng: '',
+      busLat: '',
+      location: ''
     }
     this.onStopSelected = this.onStopSelected.bind(this);
+    this.fetchArrivalTimes = this.fetchArrivalTimes.bind(this);
   }
 
   componentDidMount() {
     this.getLocation();
+    // this.fetchArrivalTimes();
   }
+
+  // componentDidUpdate(prevState, prevProps) {
+  //   // if (prevState.locid !== this.state.locid) {
+  //   //   debugger;
+  //   //   this.fetchArrivalTimes();
+  //   // }
+  //   // this.fetchArrivalTimes();
+  // }
 
   getLocation() {
     // Check for gelocation API
@@ -42,9 +55,9 @@ class App extends Component {
     }
   }
 
-  fetchNearbyStops = () => {
+  fetchNearbyStops() {
+    // debugger;
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-
     axios
       .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
       .then(res => {
@@ -57,13 +70,36 @@ class App extends Component {
       )
   }
 
+  fetchArrivalTimes() {
+    console.log("Arrival called!")
+    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    axios
+      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
+      // .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${1405}&appID=${TRIMET_API_KEY}&json=true`)
+
+      .then(res => {
+        console.log(res)
+        this.setState({
+          ...this.setState,
+          location: res.data.resultSet.arrival,
+          busLat: res.data.resultSet.arrival[0].blockPosition.lat,
+          busLng: res.data.resultSet.arrival[0].blockPosition.lng
+        })
+      })
+      .catch(error => console.log(error)
+      )
+  }
+
   onStopSelected(locid) {
     this.setState({
       locid,
+    }, () => {
+      this.fetchArrivalTimes();
     });
   }
 
   render() {
+    console.log(this.state);
     return (
       <>
         <Mapbox 
@@ -73,10 +109,13 @@ class App extends Component {
           nearbyStops={this.state.nearbyStops}
           zoom={this.state.zoom}
           locid={this.state.locid}
+          busLat={this.state.busLat}
+          busLng={this.state.busLng}
+          busPosition={this.state.busPosition}
           onStopSelected={this.onStopSelected}
+          fetchArrivalTimes={this.fetchArrivalTimes}
         />
       </>
-
     );
   }
 }

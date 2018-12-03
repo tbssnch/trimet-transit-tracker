@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import Form from './Form';
 import busIcon from './assets/bus-icon.png';
+import stopIcon from './assets/trimet-icon.png';
+
+
 import './Mapbox.css';
 import mapboxgl from 'mapbox-gl';
 // import axios from 'axios';
@@ -11,6 +14,12 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGJzc25jaCIsImEiOiJjam9ranIwMjgwNWdqM2tudW1ud
 
 class Mapbox extends PureComponent {
   mapContainer = React.createRef();
+
+  constructor(props) {
+    super(props);
+
+    
+  } 
 
   componentDidMount() {
     const { lng, lat, zoom } = this.props;
@@ -32,20 +41,32 @@ class Mapbox extends PureComponent {
     this.map.on('load', () => {
       this.map.loadImage(`${busIcon}`, (error, image) => {
         if (error) throw error;
-        this.map.addImage('stop', image);
+        this.map.addImage('bus', image);
 
-        if (!this.sourceAdded) {
-          this.addSource();
-        }
+        this.map.loadImage(`${stopIcon}`, (error, image) => {
+          if (error) throw error;
+          this.map.addImage('stop', image);
+
+          if (!this.sourceAdded) {
+            this.addSource();
+          }
+        });
       });
     });
   }
+
 
   addSource() {
     this.map.addSource('nearbystops', {
       type: 'geojson',
       data: null,
     });
+
+    this.map.addSource('nearbybus', {
+      type:'geojson',
+      data: null
+    });
+
     this.map.addLayer({
       id: "nearbystops",
       type: "symbol",
@@ -64,12 +85,30 @@ class Mapbox extends PureComponent {
         "icon-allow-overlap": true
       }
     });
+
+    this.map.addLayer({
+      id: "nearbybus",
+      type: "symbol",
+      source: "nearbybus",
+      paint: {
+        'icon-opacity': 1
+      },
+      layout: {
+        "icon-image": "bus",
+        "icon-size": 0.50,
+        "icon-allow-overlap": true
+      }
+    });
+
     this.sourceAdded = true;
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.nearbyStops.length) {
       this.renderMarkers(this.props.nearbyStops);
+    }
+    if (this.props.location.length) {
+      this.renderArrivalMarkers(this.props.location)
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
@@ -81,7 +120,7 @@ class Mapbox extends PureComponent {
       this.map.setFeatureState({
         source: 'nearbystops', 
         id: this.previouslySelectedLocid
-      }, 
+      },
       { 
         active: false 
       });
@@ -92,10 +131,12 @@ class Mapbox extends PureComponent {
     this.map.setFeatureState({ 
       source: 'nearbystops', 
       id: this.props.locid,
-    }, {
+    }, 
+    {
       active: true,
     });
   }
+
 
   renderMarkers = (nearbyStops) => {
     const FeatureCollection = {
@@ -116,11 +157,74 @@ class Mapbox extends PureComponent {
     };
     
     this.map.on('load', () => {
+      console.log("STOPS LOAD");
+      
       if (!this.sourceAdded) {
         this.addSource();
       }
       this.map.getSource('nearbystops').setData(FeatureCollection);
     });
+  }
+
+  renderArrivalMarkers = (busLocation) => {
+    console.log(busLocation);
+    const FeatureBusCollection = {
+      type: "FeatureCollection",
+      features: busLocation.map((nearbyBus) => {
+        return {
+          id: nearbyBus.locid,
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              nearbyBus.blockPosition.lng,
+              nearbyBus.blockPosition.lat,
+            ]
+          }
+        };
+      })
+    };
+
+    
+    this.map.on('load', () => {
+      console.log("ARRIVAL LOAD");
+      console.log(this);
+      
+      if (!this.sourceAdded) {
+        this.addSource();
+      }
+      this.map.getSource('nearbybus').setData(FeatureBusCollection);
+    });
+  }
+
+
+  // renderMarkers = (location) => {
+  //   const FeatureCollection = {
+  //     type: "FeatureCollection",
+  //     features: location.map((nearbyStop) => {
+  //       return {
+  //         id: nearbyStop.locid,
+  //         type: "Feature",
+  //         geometry: {
+  //           type: "Point",
+  //           coordinates: [
+  //             nearbyStop.lng,
+  //             nearbyStop.lat,
+  //           ]
+  //         }
+  //       };
+  //     }),
+  //   };
+    
+  //   this.map.on('load', () => {
+  //     if (!this.sourceAdded) {
+  //       this.addSource();
+  //     }
+  //     this.map.getSource('nearbystops').setData(FeatureCollection);
+  //   });
+  // }
+
+
 
 
       // query the map instance for the points source feature by id.(bing-bong)
@@ -157,7 +261,6 @@ class Mapbox extends PureComponent {
       //       }
       //   });
     // });
-  }
 
   // fetchArrivalTimes = () => {
   //   const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
@@ -184,6 +287,7 @@ class Mapbox extends PureComponent {
           nearbyStops={this.props.nearbyStops}
           locid={this.props.locid}
           onStopSelected={this.props.onStopSelected}
+          fetchArrivalTimes={this.props.fetchArrivalTimes}
         />
       </div>
     );
