@@ -64,13 +64,12 @@ class Form extends PureComponent {
     //     window.clearInterval(this.intervalId);
     //   }
 
-    //   this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
+      // this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
     // }
   }
 
   handleChange({ target: { value } }) {
     this.props.onStopSelected(value);
-    // this.props.fetchArrivalTimes(value);
   }
 
 
@@ -101,7 +100,10 @@ class Form extends PureComponent {
             style={styles.cardContent}
           >
               <img alt="trimet-logo" className="trimet-logo" src={logo} />
-              <h5>Where's my bus or MAX?</h5>
+              <div>
+                <h3>TRIP</h3>
+                <h3>LOCATOR</h3>
+              </div>
             <form className="arrival-form" onSubmit={this.handleSubmit}>
                <FormControl className={classes.formControl}>
                   <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>

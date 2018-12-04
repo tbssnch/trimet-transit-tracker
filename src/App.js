@@ -3,6 +3,7 @@ import axios from 'axios';
 import Mapbox from './Mapbox';
 // import Form from './Form';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -84,16 +85,18 @@ class App extends Component {
           location: res.data.resultSet.arrival,
           busLat: res.data.resultSet.arrival[0].blockPosition.lat,
           busLng: res.data.resultSet.arrival[0].blockPosition.lng
-        })
+        });
       })
       .catch(error => console.log(error)
       )
-  }
+    } 
 
   onStopSelected(locid) {
     this.setState({
       locid,
     }, () => {
+      // Callback for when state is set for selected stop trigger bus position
+      // this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
       this.fetchArrivalTimes();
     });
   }

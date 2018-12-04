@@ -15,20 +15,14 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGJzc25jaCIsImEiOiJjam9ranIwMjgwNWdqM2tudW1ud
 class Mapbox extends PureComponent {
   mapContainer = React.createRef();
 
-  constructor(props) {
-    super(props);
-
-    
-  } 
-
   componentDidMount() {
     const { lng, lat, zoom } = this.props;
 
     this.map = new mapboxgl.Map({
       container: this.mapContainer && this.mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v8',
+      style: 'mapbox://styles/mapbox/light-v8',
       center: [ lng, lat ],
-      zoom
+      zoom: 14.5
     });
 
     this.map.addControl(new mapboxgl.GeolocateControl({
@@ -66,10 +60,10 @@ class Mapbox extends PureComponent {
       type:'geojson',
       data: null
     });
-
+    
     this.map.addLayer({
-      id: "nearbystops",
-      type: "symbol",
+      id: 'nearbystops',
+      type: 'symbol',
       source: 'nearbystops',
       paint: {
         'icon-opacity': [
@@ -80,23 +74,23 @@ class Mapbox extends PureComponent {
         ]
       },
       layout: {
-        "icon-image": "stop",
-        "icon-size": 0.10,
-        "icon-allow-overlap": true
+        'icon-image': 'stop',
+        'icon-size': 0.05,
+        'icon-allow-overlap': true
       }
     });
 
     this.map.addLayer({
-      id: "nearbybus",
-      type: "symbol",
-      source: "nearbybus",
+      id: 'nearbybus',
+      type: 'symbol',
+      source: 'nearbybus',
       paint: {
         'icon-opacity': 1
       },
       layout: {
-        "icon-image": "bus",
-        "icon-size": 0.50,
-        "icon-allow-overlap": true
+        'icon-image': 'bus',
+        'icon-size': 0.50,
+        'icon-allow-overlap': true
       }
     });
 
@@ -106,12 +100,13 @@ class Mapbox extends PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.nearbyStops.length) {
       this.renderMarkers(this.props.nearbyStops);
-    }
-    if (this.props.location.length) {
-      this.renderArrivalMarkers(this.props.location)
+      this.flyToDaStops();
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
+    } 
+    if (this.props.location.length) {
+      this.renderArrivalMarkers(this.props.location)
     }
   }
 
@@ -125,7 +120,6 @@ class Mapbox extends PureComponent {
         active: false 
       });
     }
-
     this.previouslySelectedLocid = locid;
 
     this.map.setFeatureState({ 
@@ -133,16 +127,37 @@ class Mapbox extends PureComponent {
       id: this.props.locid,
     }, 
     {
-      active: true,
+      active: true, 
     });
   }
 
+  setActiveBus(locid) {
+    if (this.previouslySelectedLocid) {
+      this.map.setFeatureState({
+        source: 'nearbystops', 
+        id: this.previouslySelectedLocid
+      },
+      { 
+        active: false 
+      });
+    }
+    this.previouslySelectedLocid = locid;
 
+    // this.map.setFeatureState({ 
+    //   source: 'nearbystops', 
+    //   id: this.props.locid,
+    // }, 
+    // {
+    //   active: true, 
+    // });
+  }
+  
   renderMarkers = (nearbyStops) => {
+    console.trace('trace stops')
     const FeatureCollection = {
       type: "FeatureCollection",
       features: nearbyStops.map((nearbyStop) => {
-        return {
+        return { 
           id: nearbyStop.locid,
           type: "Feature",
           geometry: {
@@ -153,21 +168,31 @@ class Mapbox extends PureComponent {
             ]
           }
         };
-      }),
+      })
     };
     
     this.map.on('load', () => {
       console.log("STOPS LOAD");
-      
       if (!this.sourceAdded) {
         this.addSource();
       }
+      debugger;
       this.map.getSource('nearbystops').setData(FeatureCollection);
     });
   }
 
+  flyToDaStops() {
+    this.map.flyTo({
+      center: [
+        this.props.lng,
+        this.props.lat
+      ]
+    })
+  }
+
   renderArrivalMarkers = (busLocation) => {
     console.log(busLocation);
+    console.trace('trace arrivals')
     const FeatureBusCollection = {
       type: "FeatureCollection",
       features: busLocation.map((nearbyBus) => {
@@ -184,12 +209,10 @@ class Mapbox extends PureComponent {
         };
       })
     };
-
     
     this.map.on('load', () => {
       console.log("ARRIVAL LOAD");
       console.log(this);
-      
       if (!this.sourceAdded) {
         this.addSource();
       }
@@ -275,7 +298,7 @@ class Mapbox extends PureComponent {
   // }
 
 
-  render() {
+  render() {    
     return(
       <div className="map-container">
         {/* <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">

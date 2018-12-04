@@ -1,8 +1,15 @@
 .form-container {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 700;
   width: 300px;
   position: absolute;
   top: 8rem;
   left: 4rem;
+}
+
+.form-container h3 {
+  font-size: 60px;
+  margin-top: 28px;
 }
 .trimet-logo {
   width: 100px;
