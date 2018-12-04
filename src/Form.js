@@ -13,8 +13,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilledInput from '@material-ui/core/FilledInput';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = {
   card: {
@@ -92,47 +94,101 @@ class Form extends PureComponent {
   render() {
     const { classes, locid } = this.props;
     return (
-      <div className="form-container">
-        <Card
-          style={styles.card}
-        >
-          <CardContent
-            style={styles.cardContent}
-          >
-              <img alt="trimet-logo" className="trimet-logo" src={logo} />
-              <div>
-                <h3>TRIP</h3>
-                <h3>LOCATOR</h3>
-              </div>
-            <form className="arrival-form" onSubmit={this.handleSubmit}>
-               <FormControl className={classes.formControl}>
-                  <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
-                  <Select
-                    value={locid || ''}
-                    onChange={this.handleChange}
-                    onClick={this.handleClick}
-                    classes={{
-                      root: classes.root
-                    }}
-                    inputProps={{
-                      name: 'locid',
-                      id: 'stop-id'
-                    }}
-                  >
-                    {this.props.nearbyStops.length > 0
-                    ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
-                      <MenuItem key={lat} value={locid} className="nearby-results">
-                        {`${desc} ${dir} ${locid}`}
-                      </MenuItem>
-                    ))
-                    : (<MenuItem value="">Locating nearby stops...</MenuItem>)
-                  }
-                  </Select>
-                </FormControl>
-            </form>
-          </CardContent>
-        </Card>
+      <div className="forms">
+        <div className="web-form-container">
+            <Card
+              style={styles.card}
+            >
+              <CardContent
+                style={styles.cardContent}
+              >
+                  <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                  <div>
+                    <h3>TRIP</h3>
+                    <h3>LOCATOR</h3>
+                  </div>
+                <form className="arrival-form" onSubmit={this.handleSubmit}>
+                  <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
+                      <Select
+                        value={locid || ''}
+                        onChange={this.handleChange}
+                        onClick={this.handleClick}
+                        classes={{
+                          root: classes.root
+                        }}
+                        inputProps={{
+                          name: 'locid',
+                          id: 'stop-id'
+                        }}
+                      >
+                        {this.props.nearbyStops.length > 0
+                        ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
+                          <MenuItem key={lat} value={locid} className="nearby-results">
+                            {`${desc} ${dir} ${locid}`}
+                          </MenuItem>
+                        ))
+                        : (<MenuItem value="">Locating nearby stops...</MenuItem>)
+                      }
+                      </Select>
+                    </FormControl>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mobile-form-container">
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                <h2>TRIP LOCATOR</h2>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                {/* <Card
+                  style={styles.card}
+                >
+                  <CardContent
+                    style={styles.cardContent}
+                  > */}
+                      {/* <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                      <div>
+                        <h3>TRIP</h3>
+                        <h3>LOCATOR</h3>
+                      </div> */}
+                    <form className="arrival-form" onSubmit={this.handleSubmit}>
+                      <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
+                          <Select
+                            value={locid || ''}
+                            onChange={this.handleChange}
+                            onClick={this.handleClick}
+                            classes={{
+                              root: classes.root
+                            }}
+                            inputProps={{
+                              name: 'locid',
+                              id: 'stop-id'
+                            }}
+                          >
+                            {this.props.nearbyStops.length > 0
+                            ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
+                              <MenuItem key={lat} value={locid} className="nearby-results">
+                                {`${desc} ${dir} ${locid}`}
+                              </MenuItem>
+                            ))
+                            : (<MenuItem value="">Locating nearby stops...</MenuItem>)
+                          }
+                          </Select>
+                        </FormControl>
+                    </form>
+                  {/* </CardContent>
+                </Card> */}
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </div>
       </div>
+
+      
     );
   }
 }

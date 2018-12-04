@@ -93,6 +93,7 @@ class App extends Component {
 
   onStopSelected(locid) {
     this.setState({
+      ...this.setState,
       locid,
     }, () => {
       // Callback for when state is set for selected stop trigger bus position
@@ -103,6 +104,7 @@ class App extends Component {
 
   render() {
     console.log(this.state);
+    console.log(this.state.locid);
     return (
       <>
         <Mapbox 

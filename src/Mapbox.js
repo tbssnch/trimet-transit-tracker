@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import Form from './Form';
 import busIcon from './assets/bus-icon.png';
-import stopIcon from './assets/trimet-icon.png';
+import stopIcon from './assets/stop-icon.png';
 
 
 import './Mapbox.css';
@@ -22,14 +22,14 @@ class Mapbox extends PureComponent {
       container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v8',
       center: [ lng, lat ],
-      zoom: 14.5
+      zoom: 14
     });
 
     this.map.addControl(new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true
       },
-      trackUserLocation: true
+        trackUserLocation: true
     }));
 
     this.map.on('load', () => {
@@ -64,6 +64,8 @@ class Mapbox extends PureComponent {
     this.map.addLayer({
       id: 'nearbystops',
       type: 'symbol',
+      maxZoomLevel: 22,
+      minZoomLevel: 0,
       source: 'nearbystops',
       paint: {
         'icon-opacity': [
@@ -75,11 +77,11 @@ class Mapbox extends PureComponent {
       },
       layout: {
         'icon-image': 'stop',
-        'icon-size': 0.05,
+        'icon-size': 0.5,
         'icon-allow-overlap': true
       }
     });
-
+    
     this.map.addLayer({
       id: 'nearbybus',
       type: 'symbol',
@@ -143,17 +145,16 @@ class Mapbox extends PureComponent {
     }
     this.previouslySelectedLocid = locid;
 
-    // this.map.setFeatureState({ 
-    //   source: 'nearbystops', 
-    //   id: this.props.locid,
-    // }, 
-    // {
-    //   active: true, 
-    // });
+    this.map.setFeatureState({ 
+      source: 'nearbystops', 
+      id: this.props.locid,
+    }, 
+    {
+      active: true, 
+    });
   }
   
   renderMarkers = (nearbyStops) => {
-    console.trace('trace stops')
     const FeatureCollection = {
       type: "FeatureCollection",
       features: nearbyStops.map((nearbyStop) => {
@@ -176,7 +177,7 @@ class Mapbox extends PureComponent {
       if (!this.sourceAdded) {
         this.addSource();
       }
-      debugger;
+      // debugger;
       this.map.getSource('nearbystops').setData(FeatureCollection);
     });
   }
@@ -192,22 +193,33 @@ class Mapbox extends PureComponent {
 
   renderArrivalMarkers = (busLocation) => {
     console.log(busLocation);
-    console.trace('trace arrivals')
     const FeatureBusCollection = {
       type: "FeatureCollection",
-      features: busLocation.map((nearbyBus) => {
-        return {
-          id: nearbyBus.locid,
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [
-              nearbyBus.blockPosition.lng,
-              nearbyBus.blockPosition.lat,
-            ]
-          }
-        };
-      })
+
+      features: busLocation.reduce((accumulator, bus) => {
+        if (bus.blockPosition) {
+          return [
+            ...accumulator,
+            bus,
+          ];
+        }
+        return accumulator;
+      }, []),
+
+      // features: busLocation.map((nearbyBus) => {
+      //   // debugger;
+      //   return {
+      //     id: nearbyBus.locid,
+      //     type: "Feature",
+      //     geometry: {
+      //       type: "Point",
+      //       coordinates: [
+      //         nearbyBus.blockPosition.lng,
+      //         nearbyBus.blockPosition.lat,
+      //       ]
+      //     }
+      //   };
+      // })
     };
     
     this.map.on('load', () => {
