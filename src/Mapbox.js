@@ -22,7 +22,8 @@ class Mapbox extends PureComponent {
       container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v8',
       center: [ lng, lat ],
-      zoom: 14
+      zoom: 15,
+      // scrollZoom: false
     });
 
     this.map.addControl(new mapboxgl.GeolocateControl({
@@ -73,12 +74,22 @@ class Mapbox extends PureComponent {
           ['boolean', ['feature-state', 'active'], false],
           1,
           0
-        ]
+        ],
+        'text-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'active'], false],
+          1,
+          0
+        ],
       },
       layout: {
         'icon-image': 'stop',
         'icon-size': 0.5,
-        'icon-allow-overlap': true
+        'icon-allow-overlap': true,
+        'text-field': '{title}',
+        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-offset': [0, 2],
+        'text-anchor': 'top'
       }
     });
     
@@ -167,7 +178,10 @@ class Mapbox extends PureComponent {
               nearbyStop.lng,
               nearbyStop.lat,
             ]
-          }
+          },
+          properties: {
+            title: 'Stop' + ' ' + '#' + nearbyStop.locid,
+          },
         };
       })
     };

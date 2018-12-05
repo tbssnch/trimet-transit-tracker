@@ -104,7 +104,7 @@ class App extends Component {
 
   render() {
     console.log(this.state);
-    console.log(this.state.locid);
+    console.log(this.state.arrival);
     return (
       <>
         <Mapbox 
