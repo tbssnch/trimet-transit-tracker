@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react';
 import './Form.css';
 import logo from './assets/trimet-icon.png';
-import axios from 'axios';
-
-
 
 // Material Styles
 import Card from '@material-ui/core/Card';
@@ -34,7 +31,6 @@ const styles = {
     width: '40px',
     marginLeft: '20px',
     height: '57px',
-    // margin: '0 auto'
   },
   input: {
     width: '200px',
@@ -56,40 +52,9 @@ class Form extends PureComponent {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // if (this.props.locid) {
-    //   // this.setState({
-    //   //   locid: this.props.locid
-    //   // })
-    //   // this.fetchArrivalTimes()
-    //   if (this.intervalId) {
-    //     window.clearInterval(this.intervalId);
-    //   }
-
-      // this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
-    // }
-  }
-
   handleChange({ target: { value } }) {
     this.props.onStopSelected(value);
   }
-
-
-  // fetchArrivalTimes = () => {
-  //   console.log("Arrival called!")
-  //   const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-
-  //   axios
-  //     .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
-  //     .then(res => this.setState({
-  //       ...this.setState,
-  //       location: res.data.resultSet.arrival,
-  //       lat: res.data.resultSet.arrival[0].blockPosition.lat,
-  //       lng: res.data.resultSet.arrival[0].blockPosition.lng
-  //     }))
-  //     .catch(error => console.log(error)
-  //     )
-  // }
 
   render() {
     const { classes, locid } = this.props;
@@ -102,26 +67,11 @@ class Form extends PureComponent {
               <CardContent
                 style={styles.cardContent}
               >
-                  {/* <div className="transit-tracker-logo">
-                    <div className="trimet">
-                      <h3>TRIMET</h3>
-                    </div>
-                    <div className="icon-trip">
-                      <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                      <h3>TRIP</h3>
-                    </div>
-                    <h3>TRACKER</h3>
-                  </div> */}
-
                   <div className="transit-tracker-logo">
-                      {/* <img alt="trimet-logo" className="trimet-logo" src={logo} /> */}
-                      {/* <h3>TRIMET</h3> */}
                     <img alt="trimet-logo" className="trimet-logo" src={logo} />
                     <h3>TRANSIT</h3>
                     <h3>TRACKER</h3>
                   </div>
-
-
                 <form className="arrival-form" onSubmit={this.handleSubmit}>
                   <FormControl className={classes.formControl}>
                       <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
@@ -159,54 +109,38 @@ class Form extends PureComponent {
                 <h2>TRANSIT TRACKER</h2>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                {/* <Card
-                  style={styles.card}
-                >
-                  <CardContent
-                    style={styles.cardContent}
-                  > */}
-                      {/* <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                      <div>
-                        <h3>TRIP</h3>
-                        <h3>LOCATOR</h3>
-                      </div> */}
-                    <form className="arrival-form" onSubmit={this.handleSubmit}>
-                      <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
-                          <Select
-                            value={locid || ''}
-                            onChange={this.handleChange}
-                            onClick={this.handleClick}
-                            classes={{
-                              root: classes.root
-                            }}
-                            inputProps={{
-                              name: 'locid',
-                              id: 'stop-id'
-                            }}
-                          >
-                            {this.props.nearbyStops.length > 0
-                            ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
-                              <MenuItem key={lat} value={locid} className="nearby-results">
-                                {`${desc} ${dir} ${locid}`}
-                              </MenuItem>
-                            ))
-                            : (<MenuItem value="">Locating nearby stops...</MenuItem>)
-                          }
-                          </Select>
-                        </FormControl>
-                    </form>
-                  {/* </CardContent>
-                </Card> */}
+                <form className="arrival-form" onSubmit={this.handleSubmit}>
+                  <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
+                      <Select
+                        value={locid || ''}
+                        onChange={this.handleChange}
+                        onClick={this.handleClick}
+                        classes={{
+                          root: classes.root
+                        }}
+                        inputProps={{
+                          name: 'locid',
+                          id: 'stop-id'
+                        }}
+                      >
+                        {this.props.nearbyStops.length > 0
+                        ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
+                          <MenuItem key={lat} value={locid} className="nearby-results">
+                            {`${desc} ${dir} ${locid}`}
+                          </MenuItem>
+                        ))
+                        : (<MenuItem value="">Locating nearby stops...</MenuItem>)
+                      }
+                      </Select>
+                    </FormControl>
+                </form>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           </div>
       </div>
-
-      
     );
   }
 }
-
 
 export default withStyles(styles)(Form)

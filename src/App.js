@@ -3,7 +3,6 @@ import axios from 'axios';
 import Mapbox from './Mapbox';
 import Form from './Form';
 
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -14,9 +13,9 @@ class App extends Component {
       nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
       arrival: [], // excat bus postion of the stop you selected
       locid: '', // stop ID of what you selected
-      busLng: '',
-      busLat: '',
-      location: ''
+      busLng: '', // bus location lng
+      busLat: '', // bus location lat
+      location: '' // bus location information
     }
     this.onStopSelected = this.onStopSelected.bind(this);
     this.fetchArrivalTimes = this.fetchArrivalTimes.bind(this);
@@ -24,16 +23,7 @@ class App extends Component {
 
   componentDidMount() {
     this.getLocation();
-    // this.fetchArrivalTimes();
   }
-
-  // componentDidUpdate(prevState, prevProps) {
-  //   // if (prevState.locid !== this.state.locid) {
-  //   //   debugger;
-  //   //   this.fetchArrivalTimes();
-  //   // }
-  //   // this.fetchArrivalTimes();
-  // }
 
   getLocation() {
     // Check for gelocation API
@@ -57,7 +47,6 @@ class App extends Component {
   }
 
   fetchNearbyStops() {
-    // debugger;
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
     axios
       .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
@@ -76,8 +65,6 @@ class App extends Component {
     const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
-      // .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${1405}&appID=${TRIMET_API_KEY}&json=true`)
-
       .then(res => {
         console.log(res)
         this.setState({
@@ -98,7 +85,6 @@ class App extends Component {
     }, () => {
       // Callback for when state is set for selected stop trigger bus position
       this.intervalId = setInterval(this.fetchArrivalTimes, 1000 * 5);
-      // this.fetchArrivalTimes();
     });
   }
 
@@ -129,6 +115,5 @@ class App extends Component {
     );
   }
 }
-
 
 export default App;

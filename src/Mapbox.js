@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import busIcon from './assets/bus-icon.png';
 import stopIcon from './assets/stop-icon.png';
-
-
 import './Mapbox.css';
+
 import mapboxgl from 'mapbox-gl';
 import moment from 'moment';
 
@@ -22,7 +21,6 @@ class Mapbox extends PureComponent {
       style: 'mapbox://styles/mapbox/light-v8',
       center: [ lng, lat ],
       zoom: 13,
-      // scrollZoom: false
     });
 
     this.map.addControl(new mapboxgl.GeolocateControl({
@@ -137,7 +135,6 @@ class Mapbox extends PureComponent {
       this.flyToDaStops();
     } 
     if (this.props.location.length) {
-      // this.flyToDaBus();
       this.renderArrivalMarkers(this.props.location)
     }
   }
@@ -210,18 +207,8 @@ class Mapbox extends PureComponent {
     this.mapIsReadyDeferred
       .promise
       .then(() => {
-        console.log("STOPS LOAD THE REAL ONE");
         this.map.getSource('nearbystops').setData(FeatureCollection);
       });
-    
-    // this.map.on('load', () => {
-    //   console.log("STOPS LOAD");
-    //   if (!this.sourceAdded) {
-    //     this.addSource();
-    //   }
-    //   // debugger;
-    //   this.map.getSource('nearbystops').setData(FeatureCollection);
-    // });
   }
 
   flyToDaStops() {
@@ -235,6 +222,8 @@ class Mapbox extends PureComponent {
     })
   }
 
+  // TO DO: 
+  // 
   // flyToDaBus() {
   //   this.map.flyTo({
   //     center: [
@@ -247,14 +236,11 @@ class Mapbox extends PureComponent {
   // }
 
   renderArrivalMarkers = (busLocation) => {
-    console.log(busLocation);
     const FeatureBusCollection = {
       type: "FeatureCollection",
 
       features: busLocation.reduce((accumulator, bus) => {
-        // debugger;
         if (bus.blockPosition) {
-        // debugger;
           return [
             ...accumulator,
             {
@@ -275,23 +261,7 @@ class Mapbox extends PureComponent {
         }
         return accumulator;
       }, []),
-
-      // features: busLocation.map((nearbyBus) => {
-      //   // debugger;
-      //   return {
-      //     id: nearbyBus.locid,
-      //     type: "Feature",
-      //     geometry: {
-      //       type: "Point",
-      //       coordinates: [
-      //         nearbyBus.blockPosition.lng,
-      //         nearbyBus.blockPosition.lat,
-      //       ]
-      //     }
-      //   };
-      // })
     };
-    console.log('ARRIVAL ALMOST LOADED')
 
     this.mapIsReadyDeferred
       .promise
@@ -299,101 +269,11 @@ class Mapbox extends PureComponent {
         console.log("ARRIVAL LOAD");
         this.map.getSource('nearbybus').setData(FeatureBusCollection);
       });
-    // this.map.on('load', () => {
-    //   console.log("ARRIVAL LOAD");
-    //   console.log(this);
-    //   if (!this.sourceAdded) {
-    //     this.addSource();
-    //   }
-    //   this.map.getSource('nearbybus').setData(FeatureBusCollection);
-    //   // debugger;
-    // });
   }
-
-
-  // renderMarkers = (location) => {
-  //   const FeatureCollection = {
-  //     type: "FeatureCollection",
-  //     features: location.map((nearbyStop) => {
-  //       return {
-  //         id: nearbyStop.locid,
-  //         type: "Feature",
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [
-  //             nearbyStop.lng,
-  //             nearbyStop.lat,
-  //           ]
-  //         }
-  //       };
-  //     }),
-  //   };
-    
-  //   this.map.on('load', () => {
-  //     if (!this.sourceAdded) {
-  //       this.addSource();
-  //     }
-  //     this.map.getSource('nearbystops').setData(FeatureCollection);
-  //   });
-  // }
-
-
-
-
-      // query the map instance for the points source feature by id.(bing-bong)
-      // Update its position. 
-
-      
-      // this.map.loadImage(`${busIcon}`, (error, image) => {
-      //   // console.log(this, "this");
-      //   // console.log('renderMarkers', "LAT:" + lat, "LNG" + lng);
-      //   // console.log(this.state);
-      //   if (error) throw error;
-      //   this.map.addImage('stop', image);
-      //   this.map.addLayer({
-      //       "id": "points",
-      //       "type": "symbol",
-      //       "source": {
-      //           "type": "geojson",
-      //           "data": {
-      //               "type": "FeatureCollection",
-      //               "features": [{
-      //                   id: 'bing-bong',
-      //                   "type": "Feature",
-      //                   "geometry": {
-      //                       "type": "Point",
-      //                       "coordinates": [this.props.lng, this.props.lat]
-      //                   }
-      //               }]
-      //           }
-      //       },
-      //       "layout": {
-      //           "icon-image": "stop",
-      //           "icon-size": 0.10,
-      //           "icon-allow-overlap": true
-      //       }
-      //   });
-    // });
-
-  // fetchArrivalTimes = () => {
-  //   const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
-  //   // const { lat, lng } = this.state;
-  //   Axios
-  //     .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.stopId}&appID=${TRIMET_API_KEY}&json=true`)
-  //     .then(res => this.setState({
-  //       location: res.data.resultSet.location
-  //     }))
-  //     .catch(error => console.log(error)
-  //     )
-  // }
-
 
   render() {    
     return(
       <div className="map-container">
-        {/* <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
-          <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
-        </div> */}
         <div ref={this.mapContainer} className="absolute top right left bottom" />
       </div>
     );
