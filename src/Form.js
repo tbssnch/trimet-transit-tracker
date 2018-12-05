@@ -102,11 +102,26 @@ class Form extends PureComponent {
               <CardContent
                 style={styles.cardContent}
               >
+                  {/* <div className="transit-tracker-logo">
+                    <div className="trimet">
+                      <h3>TRIMET</h3>
+                    </div>
+                    <div className="icon-trip">
                   <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                  <div>
                     <h3>TRIP</h3>
-                    <h3>LOCATOR</h3>
+                    </div>
+                    <h3>TRACKER</h3>
+                  </div> */}
+
+                  <div className="transit-tracker-logo">
+                      {/* <img alt="trimet-logo" className="trimet-logo" src={logo} /> */}
+                      {/* <h3>TRIMET</h3> */}
+                    <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                    <h3>TRANSIT</h3>
+                    <h3>TRACKER</h3>
                   </div>
+
+
                 <form className="arrival-form" onSubmit={this.handleSubmit}>
                   <FormControl className={classes.formControl}>
                       <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
@@ -141,7 +156,7 @@ class Form extends PureComponent {
             <ExpansionPanel>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                <h2>TRIP LOCATOR</h2>
+                <h2>TRANSIT TRACKER</h2>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 {/* <Card
