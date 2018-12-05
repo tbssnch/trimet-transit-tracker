@@ -115,8 +115,13 @@ class Mapbox extends PureComponent {
       },
       layout: {
         'icon-image': 'bus',
-        'icon-size': 0.50,
-        'icon-allow-overlap': true
+        'icon-size': 0.15,
+        'icon-allow-overlap': true,
+        'text-allow-overlap': true,
+        'text-field': '{title}',
+        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-offset': [0, 2],
+        'text-anchor': 'top',
       }
     });
 
@@ -236,7 +241,20 @@ class Mapbox extends PureComponent {
         if (bus.blockPosition) {
           return [
             ...accumulator,
-            bus,
+            {
+              id: bus.locid,
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [
+                  bus.blockPosition.lng,
+                  bus.blockPosition.lat,
+                ]
+              },
+              properties: {
+                title: bus.shortSign + ' ' + 'ETA:' + ' ' + moment(bus.estimated).format('h:mm A'),
+              },
+            }
           ];
         }
         return accumulator;
