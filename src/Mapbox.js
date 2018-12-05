@@ -126,12 +126,12 @@ class Mapbox extends PureComponent {
     });
 
     this.sourceAdded = true;
+    this.mapIsReadyDeferred.resolve();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.nearbyStops.length) {
+    if (this.props.nearbyStops.length && !this.stopsLoaded) {
       this.renderMarkers(this.props.nearbyStops);
-      this.flyToDaStops();
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
@@ -253,7 +253,9 @@ class Mapbox extends PureComponent {
       type: "FeatureCollection",
 
       features: busLocation.reduce((accumulator, bus) => {
+        // debugger;
         if (bus.blockPosition) {
+        // debugger;
           return [
             ...accumulator,
             {
