@@ -135,8 +135,10 @@ class Mapbox extends PureComponent {
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
+      this.flyToDaStops();
     } 
     if (this.props.location.length) {
+      // this.flyToDaBus();
       this.renderArrivalMarkers(this.props.location)
     }
   }
@@ -228,9 +230,22 @@ class Mapbox extends PureComponent {
       center: [
         this.props.lng,
         this.props.lat
-      ]
+      ],
+      zoom: 16,
+      speed: 0.2
     })
   }
+
+  // flyToDaBus() {
+  //   this.map.flyTo({
+  //     center: [
+  //       this.props.busLng,
+  //       this.props.busLat
+  //     ],
+  //     zoom: 14,
+  //     speed: 0.2
+  //   })
+  // }
 
   renderArrivalMarkers = (busLocation) => {
     console.log(busLocation);
