@@ -32,6 +32,20 @@ class Mapbox extends PureComponent {
         trackUserLocation: true
     }));
 
+    this.mapIsReadyDeferred = (function() {
+      let externalResolve, externalReject;
+      const promise = new Promise((resolve, reject) => {
+        externalResolve = resolve;
+        externalReject = reject;
+      });
+
+      return {
+        resolve: externalResolve,
+        reject: externalReject,
+        promise,
+      }
+    })();
+
     this.map.on('load', () => {
       this.map.loadImage(`${busIcon}`, (error, image) => {
         if (error) throw error;
@@ -185,14 +199,23 @@ class Mapbox extends PureComponent {
       })
     };
     
-    this.map.on('load', () => {
-      console.log("STOPS LOAD");
-      if (!this.sourceAdded) {
-        this.addSource();
-      }
-      // debugger;
+    this.stopsLoaded = true;
+
+    this.mapIsReadyDeferred
+      .promise
+      .then(() => {
+        console.log("STOPS LOAD THE REAL ONE");
       this.map.getSource('nearbystops').setData(FeatureCollection);
     });
+    
+    // this.map.on('load', () => {
+    //   console.log("STOPS LOAD");
+    //   if (!this.sourceAdded) {
+    //     this.addSource();
+    //   }
+    //   // debugger;
+    //   this.map.getSource('nearbystops').setData(FeatureCollection);
+    // });
   }
 
   flyToDaStops() {
@@ -234,15 +257,23 @@ class Mapbox extends PureComponent {
       //   };
       // })
     };
+    console.log('ARRIVAL ALMOST LOADED')
     
-    this.map.on('load', () => {
+    this.mapIsReadyDeferred
+      .promise
+      .then(() => {
       console.log("ARRIVAL LOAD");
-      console.log(this);
-      if (!this.sourceAdded) {
-        this.addSource();
-      }
       this.map.getSource('nearbybus').setData(FeatureBusCollection);
     });
+    // this.map.on('load', () => {
+    //   console.log("ARRIVAL LOAD");
+    //   console.log(this);
+    //   if (!this.sourceAdded) {
+    //     this.addSource();
+    //   }
+    //   this.map.getSource('nearbybus').setData(FeatureBusCollection);
+    //   // debugger;
+    // });
   }
 
 
