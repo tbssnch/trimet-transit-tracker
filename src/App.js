@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Mapbox from './Mapbox';
-// import Form from './Form';
+import Form from './Form';
 
 
 class App extends Component {
@@ -99,6 +99,7 @@ class App extends Component {
       // Callback for when state is set for selected stop trigger bus position
       // this.intervalId = setInterval(() => this.fetchArrivalTimes(), 3500);
       this.fetchArrivalTimes();
+      // this.fetchArrivalTimes();
     });
   }
 
@@ -117,6 +118,11 @@ class App extends Component {
           busLat={this.state.busLat}
           busLng={this.state.busLng}
           busPosition={this.state.busPosition}
+        />
+        <Form 
+          location={this.state.location}
+          nearbyStops={this.state.nearbyStops}
+          locid={this.state.locid}
           onStopSelected={this.onStopSelected}
           fetchArrivalTimes={this.fetchArrivalTimes}
         />

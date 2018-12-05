@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import Form from './Form';
 import busIcon from './assets/bus-icon.png';
 import stopIcon from './assets/stop-icon.png';
 
@@ -331,13 +330,6 @@ class Mapbox extends PureComponent {
           <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
         </div> */}
         <div ref={this.mapContainer} className="absolute top right left bottom" />
-        <Form 
-          location={this.props.location}
-          nearbyStops={this.props.nearbyStops}
-          locid={this.props.locid}
-          onStopSelected={this.props.onStopSelected}
-          fetchArrivalTimes={this.props.fetchArrivalTimes}
-        />
       </div>
     );
   }
