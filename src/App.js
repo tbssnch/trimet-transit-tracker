@@ -97,7 +97,7 @@ class App extends Component {
       locid,
     }, () => {
       // Callback for when state is set for selected stop trigger bus position
-      this.intervalId = setInterval(this.fetchArrivalTimes, 1000 * 10);
+      this.intervalId = setInterval(this.fetchArrivalTimes, 1000 * 5);
       // this.fetchArrivalTimes();
     });
   }
