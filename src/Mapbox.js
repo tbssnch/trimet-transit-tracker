@@ -2,17 +2,15 @@ import React, { PureComponent } from 'react';
 import busIcon from './assets/bus-icon.png';
 import stopIcon from './assets/stop-icon.png';
 import './Mapbox.css';
-
 import mapboxgl from 'mapbox-gl';
 import moment from 'moment';
 
 
-mapboxgl.accessToken = 'pk.eyJ1IjoidGJzc25jaCIsImEiOiJjam9ranIwMjgwNWdqM2tudW1udjhkdTVhIn0._ECcZP3rrCwYmVxMyETD9w';
-
+mapboxgl.accessToken = `${process.env.REACT_APP_MAPBOX_KEY}`;
 
 class Mapbox extends PureComponent {
   mapContainer = React.createRef();
-
+  
   componentDidMount() {
     const { lng, lat, zoom } = this.props;
 

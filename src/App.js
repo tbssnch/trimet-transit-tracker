@@ -47,7 +47,7 @@ class App extends Component {
   }
 
   fetchNearbyStops() {
-    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
     axios
       .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
       .then(res => {
@@ -61,8 +61,7 @@ class App extends Component {
   }
 
   fetchArrivalTimes() {
-    console.log("Arrival called!")
-    const TRIMET_API_KEY = `0BD1DE92EE497EA57B0C32698`;
+    const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
       .then(res => {
