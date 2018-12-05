@@ -21,7 +21,7 @@ class Mapbox extends PureComponent {
       container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v8',
       center: [ lng, lat ],
-      zoom: 15,
+      zoom: 13,
       // scrollZoom: false
     });
 
