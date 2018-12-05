@@ -107,8 +107,8 @@ class Form extends PureComponent {
                       <h3>TRIMET</h3>
                     </div>
                     <div className="icon-trip">
-                  <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                    <h3>TRIP</h3>
+                      <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                      <h3>TRIP</h3>
                     </div>
                     <h3>TRACKER</h3>
                   </div> */}

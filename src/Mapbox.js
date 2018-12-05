@@ -75,11 +75,9 @@ class Mapbox extends PureComponent {
       data: null
     });
     
-    this.map.addLayer({
+    this.map.addLayer({      
       id: 'nearbystops',
       type: 'symbol',
-      maxZoomLevel: 22,
-      minZoomLevel: 0,
       source: 'nearbystops',
       paint: {
         'icon-opacity': [
@@ -99,10 +97,11 @@ class Mapbox extends PureComponent {
         'icon-image': 'stop',
         'icon-size': 0.5,
         'icon-allow-overlap': true,
+        'text-allow-overlap': true,
         'text-field': '{title}',
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
         'text-offset': [0, 2],
-        'text-anchor': 'top'
+        'text-anchor': 'top',
       }
     });
     
@@ -205,15 +204,15 @@ class Mapbox extends PureComponent {
         };
       })
     };
-    
+
     this.stopsLoaded = true;
 
     this.mapIsReadyDeferred
       .promise
       .then(() => {
         console.log("STOPS LOAD THE REAL ONE");
-      this.map.getSource('nearbystops').setData(FeatureCollection);
-    });
+        this.map.getSource('nearbystops').setData(FeatureCollection);
+      });
     
     // this.map.on('load', () => {
     //   console.log("STOPS LOAD");
@@ -231,7 +230,7 @@ class Mapbox extends PureComponent {
         this.props.lng,
         this.props.lat
       ],
-      zoom: 16,
+      zoom: 14,
       speed: 0.2
     })
   }
@@ -243,7 +242,7 @@ class Mapbox extends PureComponent {
   //       this.props.busLat
   //     ],
   //     zoom: 14,
-  //     speed: 0.2
+  //     speed: 0.3
   //   })
   // }
 
@@ -293,13 +292,13 @@ class Mapbox extends PureComponent {
       // })
     };
     console.log('ARRIVAL ALMOST LOADED')
-    
+
     this.mapIsReadyDeferred
       .promise
       .then(() => {
-      console.log("ARRIVAL LOAD");
-      this.map.getSource('nearbybus').setData(FeatureBusCollection);
-    });
+        console.log("ARRIVAL LOAD");
+        this.map.getSource('nearbybus').setData(FeatureBusCollection);
+      });
     // this.map.on('load', () => {
     //   console.log("ARRIVAL LOAD");
     //   console.log(this);
