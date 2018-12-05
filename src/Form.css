@@ -8,8 +8,37 @@
 }
 
 .forms h3 {
-  font-size: 60px;
-  margin-top: 28px;
+  font-size: 40px;
+  /* margin-top: 10px; */
+  /* color: white; */
+}
+
+.transit-tracker-logo h3 {
+  font-size: 55px;
+  margin-top: 20px;
+}
+
+/* .transit-tracker-logo {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #1D4D88;
+} */
+
+/* .trimet h3 {
+  font-size: 49px;
+} */
+
+.icon-trip {
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 12px;
+  justify-content: space-between;
+}
+
+.icon-trip h3 {
+  font-size: 55px;
 }
 
 @media only screen and (min-width: 500px) {
@@ -18,7 +47,7 @@
   }
 
   .trimet-logo {
-    width: 100px;
+    width: 45px;
   }
 }
 
