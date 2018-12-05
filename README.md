@@ -1,5 +1,5 @@
 # Transit Tracker
-### An application designed to show incoming arrivals for TriMet stops.
+### An application designed to show live TriMet Transit positions on a map.
 ### **By Tyler Bussanich**
 
 ## Description
