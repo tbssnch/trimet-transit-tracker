@@ -57,7 +57,7 @@ class Form extends PureComponent {
   }
 
   render() {
-    const { classes, locid } = this.props;
+    const { classes, locid, nearbyStops,  } = this.props;
     return (
       <div className="forms">
         <div className="web-form-container">
@@ -87,8 +87,8 @@ class Form extends PureComponent {
                           id: 'stop-id'
                         }}
                       >
-                        {this.props.nearbyStops.length > 0
-                        ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
+                        {nearbyStops.length > 0
+                        ? nearbyStops.map(({ desc, locid, lat, dir }) => (
                           <MenuItem key={lat} value={locid} className="nearby-results">
                             {`${desc} ${dir} ${locid}`}
                           </MenuItem>
@@ -124,8 +124,8 @@ class Form extends PureComponent {
                           id: 'stop-id'
                         }}
                       >
-                        {this.props.nearbyStops.length > 0
-                        ? this.props.nearbyStops.map(({ desc, locid, lat, dir }) => (
+                        {nearbyStops.length > 0
+                        ? nearbyStops.map(({ desc, locid, lat, dir }) => (
                           <MenuItem key={lat} value={locid} className="nearby-results">
                             {`${desc} ${dir} ${locid}`}
                           </MenuItem>
