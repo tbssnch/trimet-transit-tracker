@@ -90,23 +90,34 @@ class App extends Component {
   render() {
     console.log(this.state);
     console.log(this.state.arrival);
+    const { 
+      busLat, 
+      busLng, 
+      busPosition, 
+      lat, 
+      lng, 
+      location, 
+      locid, 
+      nearbyStops, 
+      zoom
+    } = this.state;
     return (
       <>
         <Mapbox 
-          lat={this.state.lat}
-          lng={this.state.lng}
-          location={this.state.location}
-          nearbyStops={this.state.nearbyStops}
-          zoom={this.state.zoom}
-          locid={this.state.locid}
-          busLat={this.state.busLat}
-          busLng={this.state.busLng}
-          busPosition={this.state.busPosition}
+          lat={lat}
+          lng={lng}
+          location={location}
+          nearbyStops={nearbyStops}
+          zoom={zoom}
+          locid={locid}
+          busLat={busLat}
+          busLng={busLng}
+          busPosition={busPosition}
         />
         <Form 
-          location={this.state.location}
-          nearbyStops={this.state.nearbyStops}
-          locid={this.state.locid}
+          location={location}
+          nearbyStops={nearbyStops}
+          locid={locid}
           onStopSelected={this.onStopSelected}
           fetchArrivalTimes={this.fetchArrivalTimes}
         />
