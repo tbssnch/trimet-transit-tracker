@@ -100,20 +100,21 @@ class App extends Component {
     return (
       <>
         <Mapbox 
+          busLng={busLng}
+          busLat={busLat}
           lat={lat}
           lng={lng}
           location={location}
           nearbyStops={nearbyStops}
           zoom={zoom}
           locid={locid}
-          busLat={busLat}
-          busLng={busLng}
-          busPosition={busPosition}
+          nearbyStops={nearbyStops}
         />
         <Form 
+          fetchArrivalTimes={this.fetchArrivalTimes}
           location={location}
-          nearbyStops={nearbyStops}
           locid={locid}
+          nearbyStops={nearbyStops}
           onStopSelected={this.onStopSelected}
           fetchArrivalTimes={this.fetchArrivalTimes}
         />
