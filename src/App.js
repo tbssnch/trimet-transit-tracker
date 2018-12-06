@@ -89,13 +89,11 @@ class App extends Component {
     const { 
       busLat, 
       busLng, 
-      busPosition, 
       lat, 
       lng, 
       location, 
       locid, 
       nearbyStops, 
-      zoom
     } = this.state;
     return (
       <>
@@ -105,8 +103,6 @@ class App extends Component {
           lat={lat}
           lng={lng}
           location={location}
-          nearbyStops={nearbyStops}
-          zoom={zoom}
           locid={locid}
           nearbyStops={nearbyStops}
         />
@@ -116,7 +112,6 @@ class App extends Component {
           locid={locid}
           nearbyStops={nearbyStops}
           onStopSelected={this.onStopSelected}
-          fetchArrivalTimes={this.fetchArrivalTimes}
         />
       </>
     );
