@@ -7,15 +7,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lng: -122.6587, // map centet lng
-      lat: 45.5122, // map center lat
-      zoom: 12.5, // map zoom
-      nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
-      arrival: [], // excat bus postion of the stop you selected
-      locid: '', // stop ID of what you selected
-      busLng: '', // bus location lng
       busLat: '', // bus location lat
-      location: '' // bus location information
+      busLng: '', // bus location lng
+      lat: 45.5122, // map center lat
+      lng: -122.6587, // map centet lng
+      location: '', // bus location information
+      locid: '', // stop ID of what you selected
+      nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
     }
     this.onStopSelected = this.onStopSelected.bind(this);
     this.fetchArrivalTimes = this.fetchArrivalTimes.bind(this);
