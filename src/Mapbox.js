@@ -96,7 +96,7 @@ class Mapbox extends PureComponent {
         'text-allow-overlap': true,
         'text-field': '{title}',
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-offset': [0, 2],
+        'text-size': 12,
         'text-anchor': 'top',
       }
     });
@@ -115,6 +115,7 @@ class Mapbox extends PureComponent {
         'text-allow-overlap': true,
         'text-field': '{title}',
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-size': 12,
         'text-offset': [0, 2],
         'text-anchor': 'top',
       }
