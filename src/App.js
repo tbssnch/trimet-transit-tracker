@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import Mapbox from './Mapbox';
+
+// components
 import Form from './Form';
+import Mapbox from './Mapbox';
+
+//packages
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {

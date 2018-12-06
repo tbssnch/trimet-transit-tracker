@@ -1,7 +1,13 @@
 import React, { PureComponent } from 'react';
+
+//assets
 import busIcon from './assets/bus-icon.png';
 import stopIcon from './assets/stop-icon.png';
+
+//styles
 import './Mapbox.css';
+
+//packages
 import mapboxgl from 'mapbox-gl';
 import moment from 'moment';
 
