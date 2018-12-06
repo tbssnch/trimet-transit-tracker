@@ -122,6 +122,7 @@ class Mapbox extends PureComponent {
         'text-allow-overlap': true,
         'text-field': '{title}',
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-max-width': 200,
         'text-size': 12,
         'text-offset': [0, 2],
         'text-anchor': 'top',
@@ -139,6 +140,7 @@ class Mapbox extends PureComponent {
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
       this.flyToDaStops();
+      // this.flyToDaBus();
     } 
     if (this.props.location.length) {
       this.renderArrivalMarkers(this.props.location)
@@ -229,7 +231,7 @@ class Mapbox extends PureComponent {
   }
 
   // TO DO: 
-  // 
+  
   // flyToDaBus() {
   //   this.map.flyTo({
   //     center: [
@@ -260,7 +262,7 @@ class Mapbox extends PureComponent {
                 ]
               },
               properties: {
-                title: bus.shortSign + ' ' + 'ETA:' + ' ' + moment(bus.estimated).format('h:mm A'),
+                title: bus.shortSign + ' ' + '|' + ' ' + moment(bus.estimated).format('h:mm A'),
               },
             }
           ];
