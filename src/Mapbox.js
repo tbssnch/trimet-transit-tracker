@@ -93,6 +93,7 @@ class Mapbox extends PureComponent {
         'icon-image': 'stop',
         'icon-size': 0.5,
         'icon-allow-overlap': true,
+        'icon-anchor': 'bottom',
         'text-allow-overlap': true,
         'text-field': '{title}',
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
