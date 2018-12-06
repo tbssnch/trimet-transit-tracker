@@ -12,7 +12,7 @@ class Mapbox extends PureComponent {
   mapContainer = React.createRef();
   
   componentDidMount() {
-    const { lng, lat, zoom } = this.props;
+    const { lng, lat } = this.props;
 
     this.map = new mapboxgl.Map({
       container: this.mapContainer && this.mapContainer.current,
