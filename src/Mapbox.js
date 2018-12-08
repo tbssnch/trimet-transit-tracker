@@ -19,52 +19,53 @@ class Mapbox extends PureComponent {
   
   componentDidMount() {
     const { lng, lat } = this.props;
-
+ 
     this.map = new mapboxgl.Map({
       container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v8',
-      center: [ lng, lat ],
+      center: [
+        lng, 
+        lat,
+      ],
       zoom: 13,
+      // minBounds: bounds
     });
 
-    this.map.addControl(new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true
-      },
+    this.geoLocateControl = new mapboxgl.GeolocateControl(
+      {
+        positionOptions: {
+          enableHighAccuracy: true
+        },
         trackUserLocation: true
-    }));
-
-    this.mapIsReadyDeferred = (function() {
-      let externalResolve, externalReject;
-      const promise = new Promise((resolve, reject) => {
-        externalResolve = resolve;
-        externalReject = reject;
-      });
-
-      return {
-        resolve: externalResolve,
-        reject: externalReject,
-        promise,
       }
-    })();
+    );
 
-    this.map.on('load', () => {
-      this.map.loadImage(`${busIcon}`, (error, image) => {
-        if (error) throw error;
-        this.map.addImage('bus', image);
+    this.navControl = new mapboxgl.NavigationControl();
 
-        this.map.loadImage(`${stopIcon}`, (error, image) => {
+    this.map.addControl(this.geoLocateControl);
+    this.map.addControl(this.navControl);
+
+    this.mapIsReady = new Promise((resolve, reject) => {
+      this.mapWasZoomedToFitBounds = false;
+
+      this.map.on('load', () => {
+        this.map.loadImage(`${busIcon}`, (error, image) => {
           if (error) throw error;
-          this.map.addImage('stop', image);
-
-          if (!this.sourceAdded) {
-            this.addSource();
-          }
+          this.map.addImage('bus', image);
+  
+          this.map.loadImage(`${stopIcon}`, (error, image) => {
+            if (error) throw error;
+            this.map.addImage('stop', image);
+  
+            if (!this.sourceAdded) {
+              this.addSource();
+              resolve();
+            }
+          });
         });
       });
-    });
+    }); 
   }
-
 
   addSource() {
     this.map.addSource('nearbystops', {
@@ -130,23 +131,28 @@ class Mapbox extends PureComponent {
     });
 
     this.sourceAdded = true;
-    this.mapIsReadyDeferred.resolve();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.nearbyStops.length && !this.stopsLoaded) {
       this.renderMarkers(this.props.nearbyStops);
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
-      this.flyToDaStops();
-      // this.flyToDaBus();
+      // this.flyToDaStops();
+      // if (this.props.nearbyStops && this.props.location) {
+      //   this.fitToShowArrivals();
+      // }
+      this.mapWasZoomedToFitBounds = false;
     } 
-    if (this.props.location.length) {
-      this.renderArrivalMarkers(this.props.location)
+    if (this.props.location.length && this.props.location !== prevProps.location) {
+      this.renderArrivalMarkers(this.props.location);
+      if (!this.mapWasZoomedToFitBounds) {
+        this.fitToShowArrivals();
+      }
     }
   }
-
+  
   setActiveStop(locid) {
     if (this.previouslySelectedLocid) {
       this.map.setFeatureState({
@@ -158,7 +164,7 @@ class Mapbox extends PureComponent {
       });
     }
     this.previouslySelectedLocid = locid;
-
+    
     this.map.setFeatureState({ 
       source: 'nearbystops', 
       id: this.props.locid,
@@ -168,26 +174,69 @@ class Mapbox extends PureComponent {
     });
   }
 
-  setActiveBus(locid) {
-    if (this.previouslySelectedLocid) {
-      this.map.setFeatureState({
-        source: 'nearbystops', 
-        id: this.previouslySelectedLocid
-      },
-      { 
-        active: false 
+  // fitToShowArrivals() {
+  //   const fitit = [[
+  //     this.props.busLng,
+  //     this.props.busLat
+  //   ], [
+  //     this.props.lng,
+  //     this.props.lat
+  //   ]]
+  //   this.map.fitBounds(fitit, {
+  //     padding: {top: 40, bottom: 40, left: 40, right: 40},
+  //     maxZoom: 14,
+  //   });
+  // }
+  
+  fitToShowArrivals() {
+    this.mapIsReady
+      .then(() => {
+        if (!this.props.location) { return; }
+
+        const lngLatBounds = new mapboxgl.LngLatBounds();
+
+        this.props.location
+          .forEach((busLocation) => {
+            if (busLocation.blockPosition) {
+              lngLatBounds.extend([busLocation.blockPosition.lng, busLocation.blockPosition.lat]);          
+            }
+          });
+
+        lngLatBounds.extend([this.props.lng, this.props.lat]);        
+
+        this.map.fitBounds(lngLatBounds, {
+          padding: {
+            top: 40, 
+            bottom: 40, 
+            left: 40, 
+            right: 40,
+          },
+        });  
+
+        this.mapWasZoomedToFitBounds = true;
       });
-    }
-    this.previouslySelectedLocid = locid;
-
-    this.map.setFeatureState({ 
-      source: 'nearbystops', 
-      id: this.props.locid,
-    }, 
-    {
-      active: true, 
-    });
   }
+
+  // setActiveBus(locid) {
+  //   if (this.previouslySelectedLocid) {
+  //     this.map.setFeatureState({
+  //       source: 'nearbystops', 
+  //       id: this.previouslySelectedLocid
+  //     },
+  //     { 
+  //       active: false 
+  //     });
+  //   }
+  //   this.previouslySelectedLocid = locid;
+
+  //   this.map.setFeatureState({ 
+  //     source: 'nearbystops', 
+  //     id: this.props.locid,
+  //   }, 
+  //   {
+  //     active: true, 
+  //   });
+  // }
   
   renderMarkers = (nearbyStops) => {
     const FeatureCollection = {
@@ -212,8 +261,7 @@ class Mapbox extends PureComponent {
 
     this.stopsLoaded = true;
 
-    this.mapIsReadyDeferred
-      .promise
+    this.mapIsReady
       .then(() => {
         this.map.getSource('nearbystops').setData(FeatureCollection);
       });
@@ -246,7 +294,6 @@ class Mapbox extends PureComponent {
   renderArrivalMarkers = (busLocation) => {
     const FeatureBusCollection = {
       type: "FeatureCollection",
-
       features: busLocation.reduce((accumulator, bus) => {
         if (bus.blockPosition) {
           return [
@@ -271,8 +318,7 @@ class Mapbox extends PureComponent {
       }, []),
     };
 
-    this.mapIsReadyDeferred
-      .promise
+    this.mapIsReady
       .then(() => {
         console.log("ARRIVAL LOAD");
         this.map.getSource('nearbybus').setData(FeatureBusCollection);

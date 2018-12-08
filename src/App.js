@@ -64,10 +64,10 @@ class App extends Component {
 
   fetchArrivalTimes() {
     const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
+
     axios
       .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
       .then(res => {
-        console.log(res)
         this.setState({
           ...this.setState,
           location: res.data.resultSet.arrival,
@@ -75,9 +75,8 @@ class App extends Component {
           busLng: res.data.resultSet.arrival[0].blockPosition.lng
         });
       })
-      .catch(error => console.log(error)
-      )
-    } 
+      .catch(error => console.log(error));
+  } 
 
   onStopSelected(locid) {
     this.setState({
@@ -85,6 +84,12 @@ class App extends Component {
       locid,
     }, () => {
       // Callback for when state is set for selected stop trigger bus position
+      this.fetchArrivalTimes();
+
+      if (this.intervalId) {
+        window.clearInterval(this.intervalId);
+      }
+
       this.intervalId = setInterval(this.fetchArrivalTimes, 1000 * 5);
     });
   }
@@ -99,6 +104,7 @@ class App extends Component {
       locid, 
       nearbyStops, 
     } = this.state;
+    console.log(this.state);
     return (
       <>
         <Mapbox 

@@ -106,7 +106,7 @@ class Form extends PureComponent {
             </Card>
           </div>
 
-          <div className="mobile-form-container">
+          {/* <div className="mobile-form-container">
             <ExpansionPanel>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <img alt="trimet-logo" className="trimet-logo" src={logo} />
@@ -139,6 +139,43 @@ class Form extends PureComponent {
                       </Select>
                     </FormControl>
                 </form>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </div> */}
+
+          <div className="mobile-form-container">
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                {/* <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                <h2>TRANSIT TRACKER</h2> */}
+                <form className="arrival-form" onSubmit={this.handleSubmit}>
+                  <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
+                      <Select
+                        value={locid || ''}
+                        onChange={this.handleChange}
+                        onClick={this.handleClick}
+                        classes={{
+                          root: classes.root
+                        }}
+                        inputProps={{
+                          name: 'locid',
+                          id: 'stop-id'
+                        }}
+                      >
+                        {nearbyStops.length > 0
+                        ? nearbyStops.map(({ desc, locid, lat, dir }) => (
+                          <MenuItem key={lat} value={locid} className="nearby-results">
+                            {`${desc} ${dir} ${locid}`}
+                          </MenuItem>
+                        ))
+                        : (<MenuItem value="">Locating nearby stops...</MenuItem>)
+                      }
+                      </Select>
+                    </FormControl>
+                </form>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           </div>
