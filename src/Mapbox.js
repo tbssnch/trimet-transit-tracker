@@ -144,10 +144,6 @@ class Mapbox extends PureComponent {
     }
     if (prevProps.locid !== this.props.locid) {
       this.setActiveStop(this.props.locid);
-      // this.flyToDaStops();
-      // if (this.props.nearbyStops && this.props.location) {
-      //   this.fitToShowArrivals();
-      // }
       this.mapWasZoomedToFitBounds = false;
     } 
     if (this.props.location.length && this.props.location !== prevProps.location) {
@@ -178,20 +174,6 @@ class Mapbox extends PureComponent {
       active: true, 
     });
   }
-
-  // fitToShowArrivals() {
-  //   const fitit = [[
-  //     this.props.busLng,
-  //     this.props.busLat
-  //   ], [
-  //     this.props.lng,
-  //     this.props.lat
-  //   ]]
-  //   this.map.fitBounds(fitit, {
-      // padding: {top: 40, bottom: 40, left: 40, right: 40},
-  //     maxZoom: 14,
-  //   });
-  // }
   
   fitToShowArrivals() {
     this.mapIsReady
@@ -231,27 +213,6 @@ class Mapbox extends PureComponent {
         this.mapWasZoomedToFitBounds = true;
       });
   }
-
-  // setActiveBus(locid) {
-  //   if (this.previouslySelectedLocid) {
-  //     this.map.setFeatureState({
-  //       source: 'nearbystops', 
-  //       id: this.previouslySelectedLocid
-  //     },
-  //     { 
-  //       active: false 
-  //     });
-  //   }
-  //   this.previouslySelectedLocid = locid;
-
-  //   this.map.setFeatureState({ 
-  //     source: 'nearbystops', 
-  //     id: this.props.locid,
-  //   }, 
-  //   {
-  //     active: true, 
-  //   });
-  // }
   
   renderMarkers = (nearbyStops) => {
     const FeatureCollection = {
@@ -292,19 +253,6 @@ class Mapbox extends PureComponent {
       speed: 0.2
     })
   }
-
-  // TO DO: 
-  
-  // flyToDaBus() {
-  //   this.map.flyTo({
-  //     center: [
-  //       this.props.busLng,
-  //       this.props.busLat
-  //     ],
-  //     zoom: 14,
-  //     speed: 0.3
-  //   })
-  // }
 
   renderArrivalMarkers = (busLocation) => {
     const FeatureBusCollection = {
