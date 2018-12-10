@@ -203,15 +203,25 @@ class Mapbox extends PureComponent {
 
         lngLatBounds.extend([this.props.lng, this.props.lat]);        
 
-        this.map.fitBounds(lngLatBounds, {
-          padding: {
-            top: 40, 
-            bottom: 40, 
-            left: 500, 
-            right: 40,
-          },
-        });  
-
+        if (window.matchMedia('(max-width: 500px)').matches) {
+          this.map.fitBounds(lngLatBounds, {
+              padding: {
+                top: 200, 
+                bottom: 40, 
+                left: 40, 
+                right: 40,
+              }
+            });  
+        } else {
+          this.map.fitBounds(lngLatBounds, {
+            padding: {
+              top: 40, 
+              bottom: 40, 
+              left: 300, 
+              right: 40,
+            }
+          });  
+        }
         this.mapWasZoomedToFitBounds = true;
       });
   }
