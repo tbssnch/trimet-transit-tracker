@@ -10,6 +10,10 @@ This application allows the user to view incoming arrival times for the bus/MAX 
 
 ## Setup/Installation
 
+Visit https://bit.ly/2E5kxz3
+
+or
+
 Open the terminal on your computer.
 
 Type "cd desktop" and hit enter.
