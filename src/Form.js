@@ -47,6 +47,9 @@ const styles = {
   formControl: {
     margin: '30px',
     width: '240px'
+  },
+  mobileCardContent: {
+    paddingBottom: '0px'
   }
 };
 
@@ -144,40 +147,46 @@ class Form extends PureComponent {
           </div> */}
 
           <div className="mobile-form-container">
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                {/* <img alt="trimet-logo" className="trimet-logo" src={logo} />
-                <h2>TRANSIT TRACKER</h2> */}
-                <form className="arrival-form" onSubmit={this.handleSubmit}>
-                  <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
-                      <Select
-                        value={locid || ''}
-                        onChange={this.handleChange}
-                        onClick={this.handleClick}
-                        classes={{
-                          root: classes.root
-                        }}
-                        inputProps={{
-                          name: 'locid',
-                          id: 'stop-id'
-                        }}
-                      >
-                        {nearbyStops.length > 0
-                        ? nearbyStops.map(({ desc, locid, lat, dir }) => (
-                          <MenuItem key={lat} value={locid} className="nearby-results">
-                            {`${desc} ${dir} ${locid}`}
-                          </MenuItem>
-                        ))
-                        : (<MenuItem value="">Locating nearby stops...</MenuItem>)
-                      }
-                      </Select>
-                    </FormControl>
-                </form>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
+            <Card 
+              style={styles.mobileCard}
+            >
+              <CardContent
+                style={styles.mobileCardContent}
+              >
+                <div className="mobile-card-content">
+                  <div className="mobile-logo">
+                    <img alt="trimet-logo" className="trimet-logo" src={logo} />
+                    <h2>TRANSIT TRACKER</h2>
+                  </div>
+                  <form className="arrival-form" onSubmit={this.handleSubmit}>
+                    <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor='stop-id'>Find Stops Near Me</InputLabel>
+                        <Select
+                          value={locid || ''}
+                          onChange={this.handleChange}
+                          onClick={this.handleClick}
+                          classes={{
+                            root: classes.root
+                          }}
+                          inputProps={{
+                            name: 'locid',
+                            id: 'stop-id'
+                          }}
+                        >
+                          {nearbyStops.length > 0
+                          ? nearbyStops.map(({ desc, locid, lat, dir }) => (
+                            <MenuItem key={lat} value={locid} className="nearby-results">
+                              {`${desc} ${dir} ${locid}`}
+                            </MenuItem>
+                          ))
+                          : (<MenuItem value="">Locating nearby stops...</MenuItem>)
+                        }
+                        </Select>
+                      </FormControl>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
           </div>
       </div>
     );

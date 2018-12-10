@@ -28,7 +28,6 @@ class Mapbox extends PureComponent {
         lat,
       ],
       zoom: 13,
-      // minBounds: bounds
     });
 
     this.geoLocateControl = new mapboxgl.GeolocateControl(
@@ -118,7 +117,7 @@ class Mapbox extends PureComponent {
       },
       layout: {
         'icon-image': 'bus',
-        'icon-size': 0.15,
+        'icon-size': 0.10,
         'icon-allow-overlap': true,
         'text-allow-overlap': true,
         'text-field': '{title}',
@@ -183,7 +182,7 @@ class Mapbox extends PureComponent {
   //     this.props.lat
   //   ]]
   //   this.map.fitBounds(fitit, {
-  //     padding: {top: 40, bottom: 40, left: 40, right: 40},
+      // padding: {top: 40, bottom: 40, left: 40, right: 40},
   //     maxZoom: 14,
   //   });
   // }
@@ -208,7 +207,7 @@ class Mapbox extends PureComponent {
           padding: {
             top: 40, 
             bottom: 40, 
-            left: 40, 
+            left: 500, 
             right: 40,
           },
         });  

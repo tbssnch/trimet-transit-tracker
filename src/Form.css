@@ -18,19 +18,8 @@
   margin-top: 20px;
 }
 
-/* .transit-tracker-logo {
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #1D4D88;
-} */
-
-/* .trimet h3 {
-  font-size: 49px;
-} */
-
 .icon-trip {
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   margin-bottom: 10px;
   margin-top: 12px;
@@ -53,7 +42,6 @@
 
 @media only screen and (max-width: 500px) {
   .forms {
-    top: 4rem;
     left: 6.5rem;
   }
   .web-form-container {
@@ -62,17 +50,32 @@
   .trimet-logo {
     width: 25px;
     height: 25px;
-    margin-right: 20px;
+    margin-right: 10px;
   }
 
   .mobile-form-container {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: -118px;
+    margin-left: -25px;
+    width: 310px;
+  }
+
+  .mobile-logo {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  .mobile-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .arrival-form {
-    margin-top: -40px;
+    margin-top: -28px;
   }
 }
 
