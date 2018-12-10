@@ -94,6 +94,9 @@ class Mapbox extends PureComponent {
           1,
           0
         ],
+        'text-color': "#202",
+        'text-halo-color': "#fff",
+        'text-halo-width': 2
       },
       layout: {
         'icon-image': 'stop',
@@ -113,7 +116,10 @@ class Mapbox extends PureComponent {
       type: 'symbol',
       source: 'nearbybus',
       paint: {
-        'icon-opacity': 1
+        'icon-opacity': 1,
+        'text-color': "#202",
+        'text-halo-color': "#fff",
+        'text-halo-width': 2
       },
       layout: {
         'icon-image': 'bus',
