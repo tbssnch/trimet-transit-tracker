@@ -40,7 +40,7 @@
   }
 }
 
-@media only screen and (max-width: 500px) {
+@media (max-width: 500px) {
   .forms {
     left: 6.5rem;
   }
@@ -79,13 +79,13 @@
   }
 }
 
-@media only screen and (max-width: 414px) {
+@media (max-width: 414px) {
   .forms {
     left: 58px;
   }
 }
 
-@media only screen and (max-width: 375px) {
+@media (max-width: 375px) {
   .forms {
     left: 38px;
   }
