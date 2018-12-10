@@ -146,8 +146,8 @@ class Mapbox extends PureComponent {
       this.setActiveStop(this.props.locid);
       this.mapWasZoomedToFitBounds = false;
     } 
-    if (this.props.location.length && this.props.location !== prevProps.location) {
-      this.renderArrivalMarkers(this.props.location);
+    if (this.props.busLocation.length && this.props.busLocation !== prevProps.busLocation) {
+      this.renderArrivalMarkers(this.props.busLocation);
       if (!this.mapWasZoomedToFitBounds) {
         this.fitToShowArrivals();
       }
@@ -178,14 +178,14 @@ class Mapbox extends PureComponent {
   fitToShowArrivals() {
     this.mapIsReady
       .then(() => {
-        if (!this.props.location) { return; }
+        if (!this.props.busLocation) { return; }
 
         const lngLatBounds = new mapboxgl.LngLatBounds();
 
-        this.props.location
-          .forEach((busLocation) => {
-            if (busLocation.blockPosition) {
-              lngLatBounds.extend([busLocation.blockPosition.lng, busLocation.blockPosition.lat]);          
+        this.props.busLocation
+          .forEach((busLoc) => {
+            if (busLoc.blockPosition) {
+              lngLatBounds.extend([busLoc.blockPosition.lng, busLoc.blockPosition.lat]);          
             }
           });
 
@@ -254,10 +254,10 @@ class Mapbox extends PureComponent {
     })
   }
 
-  renderArrivalMarkers = (busLocation) => {
+  renderArrivalMarkers = (busLoc) => {
     const FeatureBusCollection = {
       type: "FeatureCollection",
-      features: busLocation.reduce((accumulator, bus) => {
+      features: busLoc.reduce((accumulator, bus) => {
         if (bus.blockPosition) {
           return [
             ...accumulator,

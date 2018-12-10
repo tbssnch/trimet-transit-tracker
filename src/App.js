@@ -13,9 +13,9 @@ class App extends Component {
     this.state = {
       busLat: '', // bus location lat
       busLng: '', // bus location lng
+      busLocation: '', // bus location information
       lat: 45.5122, // map center lat
       lng: -122.6587, // map centet lng
-      location: '', // bus location information
       locid: '', // stop ID of what you selected
       nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
     }
@@ -70,9 +70,9 @@ class App extends Component {
       .then(res => {
         this.setState({
           ...this.setState,
-          location: res.data.resultSet.arrival,
           busLat: res.data.resultSet.arrival[0].blockPosition.lat,
-          busLng: res.data.resultSet.arrival[0].blockPosition.lng
+          busLng: res.data.resultSet.arrival[0].blockPosition.lng,
+          busLocation: res.data.resultSet.arrival
         });
       })
       .catch(error => console.log(error));
@@ -98,9 +98,9 @@ class App extends Component {
     const { 
       busLat, 
       busLng, 
+      busLocation, 
       lat, 
       lng, 
-      location, 
       locid, 
       nearbyStops, 
     } = this.state;
@@ -110,15 +110,15 @@ class App extends Component {
         <Mapbox 
           busLng={busLng}
           busLat={busLat}
+          busLocation={busLocation}
           lat={lat}
           lng={lng}
-          location={location}
           locid={locid}
           nearbyStops={nearbyStops}
         />
         <Form 
+          busLocation={busLocation}
           fetchArrivalTimes={this.fetchArrivalTimes}
-          location={location}
           locid={locid}
           nearbyStops={nearbyStops}
           onStopSelected={this.onStopSelected}
