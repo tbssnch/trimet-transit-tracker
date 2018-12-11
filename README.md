@@ -12,27 +12,6 @@ This application allows the user to view incoming arrival times for the bus/MAX 
 
 Visit https://bit.ly/2E5kxz3
 
-or
-
-Open the terminal on your computer.
-
-Type "cd desktop" and hit enter.
-
-After you are in the desktop,
-
-Type "git clone https://github.com/tbssnch/transit-tracker.git" and hit enter.
-
-Now, type in "cd transit-tracker" and hit enter
-
-Next, type "atom ." (or whichever text editor you prefer) and hit enter.
-
-Once your text editor has opened up the project, back in your terminal type in "npm install"
-
-After the installation, type "npm run start"
-
-After this, you will be able to enter http://localhost:3000/ into your browser and view the project.
-
-
 ## Support
 
 Contact Tyler at tbssnch@gmail.com
