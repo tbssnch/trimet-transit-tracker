@@ -39,7 +39,7 @@ class App extends Component {
   componentDidMount() {
     this.getLocation();
   }
-  
+
   componentWillUnmount() {
     if (this.intervalId) {
       window.clearInterval(this.intervalId);

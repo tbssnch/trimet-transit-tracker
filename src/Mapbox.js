@@ -16,7 +16,6 @@ mapboxgl.accessToken = `${process.env.REACT_APP_MAPBOX_KEY}`;
 
 class Mapbox extends PureComponent {
   mapContainer = React.createRef();
-  onMapLoad: Function;
 
   constructor(props) {
     super(props);
@@ -29,7 +28,6 @@ class Mapbox extends PureComponent {
 
   componentDidMount() {
     const { lng, lat } = this.props;
-
     this.map = new mapboxgl.Map({
       container: this.mapContainer && this.mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v8',
@@ -61,9 +59,9 @@ class Mapbox extends PureComponent {
       // if (error) throw error;
       this.map.addImage('bus', image);
 
-      this.map.loadImage(`${stopIcon}`, (error, image) => {
+      this.map.loadImage(`${stopIcon}`, (error, stopImage) => {
         // if (error) throw error;
-        this.map.addImage('stop', image);
+        this.map.addImage('stop', stopImage);
         this.addSource();
       });
     });
@@ -151,26 +149,28 @@ class Mapbox extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.nearbyStops.length
-      && this.props.nearbyStops !== prevProps.nearbyStops
-      ) {
-      this.renderMarkers(this.props.nearbyStops);
+    const { nearbyStops, locID, busLocation } = this.props;
+    if (nearbyStops.length
+      && nearbyStops !== prevProps.nearbyStops
+    ) {
+      this.renderMarkers(nearbyStops);
     }
 
-    if (prevProps.locID !== this.props.locID && this.props.locID) {
-      this.setActiveStop(this.props.locID);
+    if (prevProps.locID !== locID && locID) {
+      this.setActiveStop(locID);
       this.mapWasZoomedToFitBounds = false;
     }
-    
-    if (this.props.busLocation.length && this.props.busLocation !== prevProps.busLocation) {
-      this.renderArrivalMarkers(this.props.busLocation);
+
+    if (busLocation.length && busLocation !== prevProps.busLocation) {
+      this.renderArrivalMarkers(busLocation);
       if (!this.mapWasZoomedToFitBounds) {
         this.fitToShowArrivals();
       }
     }
   }
 
-  setActiveStop(locID) {
+  setActiveStop(locId) {
+    const { locID } = this.props;
     if (this.previouslySelectedLocid) {
       this.map.setFeatureState({
         source: 'nearbystops',
@@ -180,11 +180,11 @@ class Mapbox extends PureComponent {
         active: false,
       });
     }
-    this.previouslySelectedLocid = locID;
+    this.previouslySelectedLocid = locId;
 
     this.map.setFeatureState({
       source: 'nearbystops',
-      id: this.props.locID,
+      id: locID,
     },
     {
       active: true,
@@ -192,17 +192,19 @@ class Mapbox extends PureComponent {
   }
 
   fitToShowArrivals() {
-    if (!this.state.hasMapLoaded) { return }
+    const { hasMapLoaded } = this.state;
+    const { busLocation, lat, lng } = this.props;
+    if (!hasMapLoaded) { return; }
     const lngLatBounds = new mapboxgl.LngLatBounds();
 
-    this.props.busLocation
+    busLocation
       .forEach((busLoc) => {
         if (busLoc.blockPosition) {
           lngLatBounds.extend([busLoc.blockPosition.lng, busLoc.blockPosition.lat]);
         }
       });
 
-    lngLatBounds.extend([this.props.lng, this.props.lat]);
+    lngLatBounds.extend([lng, lat]);
 
     if (window.matchMedia('(max-width: 500px)').matches) {
       this.map.fitBounds(lngLatBounds, {
@@ -227,8 +229,9 @@ class Mapbox extends PureComponent {
   }
 
   renderMarkers = (nearbyStops) => {
-    if (!this.state.hasMapLoaded) { return; }
-    console.log('rendering markers')
+    const { hasMapLoaded } = this.state;
+    if (!hasMapLoaded) { return; }
+    console.log('rendering markers');
     const FeatureCollection = {
       type: 'FeatureCollection',
       features: nearbyStops.map(nearbyStop => ({
@@ -251,7 +254,8 @@ class Mapbox extends PureComponent {
   }
 
   renderArrivalMarkers = (busLoc) => {
-    if (!this.state.hasMapLoaded) { return; }
+    const { hasMapLoaded } = this.state;
+    if (!hasMapLoaded) { return; }
     const FeatureBusCollection = {
       type: 'FeatureCollection',
       features: busLoc.reduce((accumulator, bus) => {
@@ -296,6 +300,6 @@ Mapbox.propTypes = {
   busLocation: PropTypes.arrayOf(PropTypes.object).isRequired,
   lat: PropTypes.number.isRequired,
   lng: PropTypes.number.isRequired,
-  locID: PropTypes.number,
+  locID: PropTypes.number.isRequired,
   nearbyStops: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

@@ -27,6 +27,7 @@
   "rules": {
     "react/prefer-stateless-function": 0,
     "react/sort-comp": 0,
-    "react/jsx-filename-extension": 0
+    "react/jsx-filename-extension": 0,
+    "no-useless-concat": 0
   }
 }

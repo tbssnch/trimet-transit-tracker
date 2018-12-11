@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 // assets
 
@@ -137,11 +138,11 @@ class Form extends PureComponent {
                     >
                       {nearbyStops.length > 0
                         ? nearbyStops.map(({
-                          desc, locID, lat, dir,
+                          desc, lat, dir,
                         }) => (
                           <MenuItem key={lat} value={locID} className="nearby-results">
-                              {`${desc} ${dir} ${locID}`}
-                            </MenuItem>
+                            {`${desc} ${dir} ${locID}`}
+                          </MenuItem>
                         ))
                         : (<MenuItem value="">Locating nearby stops...</MenuItem>)
                         }
@@ -158,3 +159,10 @@ class Form extends PureComponent {
 }
 
 export default withStyles(styles)(Form);
+
+Form.propTypes = {
+  onStopSelected: PropTypes.number.isRequired,
+  classes: PropTypes.string.isRequired,
+  locID: PropTypes.number.isRequired,
+  nearbyStops: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
