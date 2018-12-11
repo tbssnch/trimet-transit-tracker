@@ -56,11 +56,12 @@ class Form extends PureComponent {
   }
 
   handleChange({ target: { value } }) {
-    this.props.onStopSelected(value);
+    const { onStopSelected } = this.props;
+    onStopSelected(value);
   }
 
   render() {
-    const { classes, locid, nearbyStops } = this.props;
+    const { classes, locID, nearbyStops } = this.props;
     return (
       <div className="forms">
         <div className="web-form-container">
@@ -79,14 +80,14 @@ class Form extends PureComponent {
                 <FormControl className={classes.formControl}>
                   <InputLabel htmlFor="stop-id">Find Stops Near Me</InputLabel>
                   <Select
-                    value={locid || ''}
+                    value={locID || ''}
                     onChange={this.handleChange}
                     onClick={this.handleClick}
                     classes={{
                       root: classes.root,
                     }}
                     inputProps={{
-                      name: 'locid',
+                      name: 'locID',
                       id: 'stop-id',
                     }}
                   >
@@ -123,23 +124,23 @@ class Form extends PureComponent {
                   <FormControl className={classes.formControl}>
                     <InputLabel htmlFor="stop-id">Find Stops Near Me</InputLabel>
                     <Select
-                      value={locid || ''}
+                      value={locID || ''}
                       onChange={this.handleChange}
                       onClick={this.handleClick}
                       classes={{
                         root: classes.root,
                       }}
                       inputProps={{
-                        name: 'locid',
+                        name: 'locID',
                         id: 'stop-id',
                       }}
                     >
                       {nearbyStops.length > 0
                         ? nearbyStops.map(({
-                          desc, locid, lat, dir,
+                          desc, locID, lat, dir,
                         }) => (
-                          <MenuItem key={lat} value={locid} className="nearby-results">
-                              {`${desc} ${dir} ${locid}`}
+                          <MenuItem key={lat} value={locID} className="nearby-results">
+                              {`${desc} ${dir} ${locID}`}
                             </MenuItem>
                         ))
                         : (<MenuItem value="">Locating nearby stops...</MenuItem>)
