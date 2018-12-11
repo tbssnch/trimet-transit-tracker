@@ -243,17 +243,6 @@ class Mapbox extends PureComponent {
       });
   }
 
-  flyToDaStops() {
-    this.map.flyTo({
-      center: [
-        this.props.lng,
-        this.props.lat
-      ],
-      zoom: 14,
-      speed: 0.2
-    })
-  }
-
   renderArrivalMarkers = (busLoc) => {
     const FeatureBusCollection = {
       type: "FeatureCollection",
