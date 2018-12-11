@@ -1,30 +1,49 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 // components
 import Form from './Form';
 import Mapbox from './Mapbox';
 
-//packages
-import axios from 'axios';
+// packages
+
+const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
+const TRIMET_API = 'https://developer.trimet.org/ws/V1/';
+
+function buildTrimetUrl(route) {
+  return `${TRIMET_API}${route}`;
+}
+
+function buildTrimetQp(additionalQp) {
+  return {
+    params: {
+      ...additionalQp,
+      appId: TRIMET_API_KEY,
+    },
+  };
+}
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      busLat: '', // bus location lat
-      busLng: '', // bus location lng
-      busLocation: '', // bus location information
+      busLocation: [], // bus location information
       lat: 45.5122, // map center lat
       lng: -122.6587, // map centet lng
-      locid: '', // stop ID of what you selected
       nearbyStops: [], // nearby stops ( for the dropdown and Map markers )
-    }
+    };
     this.onStopSelected = this.onStopSelected.bind(this);
     this.fetchArrivalTimes = this.fetchArrivalTimes.bind(this);
   }
 
   componentDidMount() {
     this.getLocation();
+  }
+  
+  componentWillUnmount() {
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId);
+    }
   }
 
   getLocation() {
@@ -33,93 +52,103 @@ class App extends Component {
       // Get Current user location
       // Updating the latitude and longitude in the state
       navigator.geolocation.getCurrentPosition(
-        ({ coords: { latitude, longitude }}) => {
+        ({ coords: { latitude, longitude } }) => {
           this.setState({
-            lat: latitude, 
-            lng: longitude
-          })
-          this.fetchNearbyStops();
+            lat: latitude,
+            lng: longitude,
+          }, () => {
+            this.fetchNearbyStops();
+          });
         },
-        err => {
+        (err) => {
           console.log(err);
         },
-        { maximumAge: 60000, timeout: 90000 }
+        { maximumAge: 60000, timeout: 90000 },
       );
     }
   }
 
   fetchNearbyStops() {
-    const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
+    const {
+      lat,
+      lng,
+    } = this.state;
+
     axios
-      .get(`https://developer.trimet.org/ws/V1/stops?json=true&appID=${TRIMET_API_KEY}&ll=${this.state.lat}, ${this.state.lng}&feet=1000`)
-      .then(res => {
+      .get(
+        buildTrimetUrl('stops'),
+        buildTrimetQp({
+          ll: `${lat}, ${lng}`,
+          feet: 1000,
+          json: true,
+        }),
+      )
+      .then((res) => {
         this.setState({
-          ...this.state,
-         nearbyStops: res.data.resultSet.location
+          nearbyStops: res.data.resultSet.location,
         });
       })
-      .catch(error => console.log(error)
-      )
+      .catch(console.log);
   }
 
   fetchArrivalTimes() {
-    const TRIMET_API_KEY = `${process.env.REACT_APP_TRIMET_KEY}`;
+    const {
+      locID,
+    } = this.state;
 
     axios
-      .get(`https://developer.trimet.org/ws/V1/arrivals?locIDs=${this.state.locid}&appID=${TRIMET_API_KEY}&json=true`)
-      .then(res => {
+      .get(
+        buildTrimetUrl('arrivals'),
+        buildTrimetQp({
+          locIDs: locID,
+          json: true,
+        }),
+      )
+      .then((res) => {
         this.setState({
-          ...this.setState,
-          busLat: res.data.resultSet.arrival[0].blockPosition.lat,
-          busLng: res.data.resultSet.arrival[0].blockPosition.lng,
-          busLocation: res.data.resultSet.arrival
+          busLocation: res.data.resultSet.arrival,
         });
       })
-      .catch(error => console.log(error));
-  } 
+      .catch(console.log);
+  }
 
-  onStopSelected(locid) {
+  onStopSelected(locID) {
     this.setState({
-      ...this.setState,
-      locid,
+      locID,
     }, () => {
-      // Callback for when state is set for selected stop trigger bus position
       this.fetchArrivalTimes();
 
       if (this.intervalId) {
         window.clearInterval(this.intervalId);
       }
 
-      this.intervalId = setInterval(this.fetchArrivalTimes, 1000 * 5);
+      this.intervalId = setInterval(
+        this.fetchArrivalTimes,
+        5000,
+      );
     });
   }
 
   render() {
-    const { 
-      busLat, 
-      busLng, 
-      busLocation, 
-      lat, 
-      lng, 
-      locid, 
-      nearbyStops, 
+    const {
+      busLocation,
+      lat,
+      lng,
+      locID,
+      nearbyStops,
     } = this.state;
-    console.log(this.state);
+
     return (
       <>
-        <Mapbox 
-          busLng={busLng}
-          busLat={busLat}
+        <Mapbox
           busLocation={busLocation}
           lat={lat}
           lng={lng}
-          locid={locid}
+          locID={locID}
           nearbyStops={nearbyStops}
         />
-        <Form 
-          busLocation={busLocation}
-          fetchArrivalTimes={this.fetchArrivalTimes}
-          locid={locid}
+        <Form
+          locID={locID}
           nearbyStops={nearbyStops}
           onStopSelected={this.onStopSelected}
         />
